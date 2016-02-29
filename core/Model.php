@@ -22,9 +22,8 @@ abstract class Model {
 	public function find($andWhere = [], array $orWhere = []){
 		$query = "{$this->prepareBasicQuery(false)} WHERE ";
 
-		if (!empty($andWhere) && !is_array($andWhere)) {
-			$andWhere = ['id' => $andWhere];
-		}
+		if (!empty($andWhere) && !is_array($andWhere)) 	$andWhere = ['id' => $andWhere];
+		if (!isset($andWhere['active'])) $andWhere['active'] = 1;
 		
 		$andWhere = $this->mountStringMap($andWhere, ' AND ');
 		$orWhere  = (empty($andWhere) && !empty($orWhere) || empty($orWhere) ? '' : ' OR ') . $this->mountStringMap($orWhere, ' OR ');
@@ -73,15 +72,12 @@ abstract class Model {
 
 	public function save(array $data){
 		$columns = implode(array_keys($data), ', ');
-		$values  = implode(array_filter($data, array($this, 'escape')), ', ');
+		$values  = implode(array_filter($data, [$this, 'escape']), ', ');
 
-		$query = "INSERT INTO {$this->table} ({$columns}) VALUES ({$values});";
-
+		$query  = "INSERT INTO {$this->table} ({$columns}) VALUES ({$values});";
 		$insert = $this->executeQuery($query);
 
-		if (!$insert) return false;
-
-		return true;
+		if (!$insert) throw new \Exception("Ocorreu algum erro ao cadastrar!");
 	}
 
 	private function escape(&$string){
@@ -90,20 +86,18 @@ abstract class Model {
 	}
 
 	public function update(array $data, $where){
-
 		if (empty($data) || empty($where)) {
-			return false;
+			throw new \Exception("Os parametros passados para função estão incorretos");
 		}
 
 		$this->prepareClauseWhere($where);
 
-		$data = $this->mountStringMap($data, ', ');
-
+		$data  = $this->mountStringMap($data, ', ');
 		$query = "UPDATE {$this->table} SET {$data} WHERE {$where};";
 
-		$returnUpdate = $this->executeQuery($query);
+		$update = $this->executeQuery($query);
 
-		return $returnUpdate;
+		if (!$update) throw new \Exception("Ocorreu algum erro ao editar!");
 	}
 
 	private function prepareClauseWhere(&$where) {
@@ -113,6 +107,14 @@ abstract class Model {
 			$where = $this->mountStringMap($where, ' AND ');
 		}
 	}
+
+	protected function validateRequiredFields($requiredFields, $data){
+	    foreach ($requiredFields as $requiredField) {
+	        if (!isset($data[$requiredField]) || empty($data[$requiredField])) {
+	            throw new \Exception("Os campos obrigatórios não foram preenchidos!");
+	        }
+	    }
+	}	
 }
 
 ?>

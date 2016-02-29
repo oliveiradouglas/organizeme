@@ -63,7 +63,7 @@ class GroupController extends \Core\Controller {
 
 	public function edit(array $url) {
 		verifyUserIsLogged();
-		$this->validateId($url, 'group');
+		$this->validateFillTheId($url, 'group');
 
 		$group = $this->loadGroup($url[2]);
 
@@ -91,7 +91,7 @@ class GroupController extends \Core\Controller {
 	public function saveEdit(array $url) {
 		verifyUserIsLogged();
 		validatePost('project', 'project');
-		$this->validateId($url, 'project');
+		$this->validateFillTheId($url, 'project');
 
 		$this->loadProject($url[2]);
 
@@ -108,7 +108,7 @@ class GroupController extends \Core\Controller {
 
 	public function delete(array $url) {
 		verifyUserIsLogged();
-		$this->validateId($url, 'project');
+		$this->validateFillTheId($url, 'project');
 
 		$this->loadProject($url[2]);
 

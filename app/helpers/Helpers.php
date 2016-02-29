@@ -44,31 +44,11 @@ function generateLink($controller, $action, array $parameters = []){
     return DOMAIN . "/{$controller}/{$action}/" . implode('/', $parameters);
 }
 
-function validateRequiredFields($requiredFields, $data){
-    foreach ($requiredFields as $requiredField) {
-        if (!isset($data[$requiredField]) || empty($data[$requiredField])) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 function verifyUserIsLogged() {
     if (!isset($_SESSION['user'])) {
         $alert = new \Helpers\Alert();
         $alert->printAlert('user', 'USER_NOT_LOGGED', false);
         
-        $view = new \Core\View();
-        $view->redirectToPage(DOMAIN);
-    }
-}
-
-function validatePost($controllerName, $nameIndexPost){
-    if (!isset($_POST[$nameIndexPost])) {
-        $alert = new \Helpers\Alert();
-        $alert->printAlert($controllerName, strtoupper($nameIndexPost) . "_POST_EMPTY", false);
-
         $view = new \Core\View();
         $view->redirectToPage(DOMAIN);
     }

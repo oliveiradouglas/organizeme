@@ -13,12 +13,12 @@ abstract class Controller {
 	}
 
 	protected function loadModel($modelName){
-		$modelName = ucfirst(strtolower(trim($modelName))) . 'Model';
-		$modelName = "\\Models\\{$modelName}";
+		$modelName   = ucfirst(strtolower(trim($modelName))) . 'Model';
+		$modelName   = "\\Models\\{$modelName}";
 		$this->model = new $modelName();
 	}
 
-	protected function validateId(array $url, $nameController, $url3 = false) {
+	protected function validateFillTheId(array $url, $nameController, $url3 = false) {
 		if (!isset($url[2]) || empty($url[2])) {
 			$this->alert->printAlert(strtolower($nameController), strtoupper($nameController) . '_ID', false);
 			$this->view->redirectToPage(DOMAIN);
@@ -29,6 +29,10 @@ abstract class Controller {
 			$this->view->redirectToPage(DOMAIN);
 		}
 	}
+
+	protected function postExists($nameIndexPost){
+		return (isset($_POST[$nameIndexPost]) ? true : false);
+	}	
 }
 
 ?>

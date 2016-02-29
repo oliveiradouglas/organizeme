@@ -8,6 +8,6 @@ $baseDir = dirname($vendorDir);
 return array(
     'Models\\' => array($baseDir . '/app/models'),
     'Helpers\\' => array($baseDir . '/app/helpers'),
-    'Core\\' => array($baseDir . '/app/src'),
+    'Core\\' => array($baseDir . '/core'),
     'Controllers\\' => array($baseDir . '/app/controllers'),
 );

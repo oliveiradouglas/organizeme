@@ -59,7 +59,7 @@ class ProjectController extends \Core\Controller {
 
 	public function edit(array $url) {
 		verifyUserIsLogged();
-		$this->validateId($url, 'project');
+		$this->validateFillTheId($url, 'project');
 
 		$project = $this->loadProject($url[2]);
 
@@ -87,7 +87,7 @@ class ProjectController extends \Core\Controller {
 	public function saveEdit(array $url) {
 		verifyUserIsLogged();
 		validatePost('project', 'project');
-		$this->validateId($url, 'project');
+		$this->validateFillTheId($url, 'project');
 
 		$this->loadProject($url[2]);
 
@@ -104,7 +104,7 @@ class ProjectController extends \Core\Controller {
 
 	public function delete(array $url) {
 		verifyUserIsLogged();
-		$this->validateId($url, 'project');
+		$this->validateFillTheId($url, 'project');
 
 		$this->loadProject($url[2]);
 

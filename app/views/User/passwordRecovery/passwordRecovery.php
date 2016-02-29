@@ -11,7 +11,7 @@
 				</div>
 
 				<div class="panel-body">
-					<form class="form-horizontal" role="form" method="post" id="form-validate" action="<?= generateLink('user', 'requestPasswordRecovery'); ?>">
+					<form class="form-horizontal" role="form" method="post" id="form-validate" action="<?= generateLink('user', 'passwordRecovery'); ?>">
 					  	<div class="form-group">
 					    	<label class="control-label col-sm-3" for="email">
 					    		Email *

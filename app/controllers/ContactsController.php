@@ -162,7 +162,7 @@ class ContactsController extends \Core\Controller {
 
 	public function delete(array $url) {
 		verifyUserIsLogged();
-		$this->validateId($url, 'contacts');
+		$this->validateFillTheId($url, 'contacts');
 
 		$currentUserId = $_SESSION['user']['id'];
 

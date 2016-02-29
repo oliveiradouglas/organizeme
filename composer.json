@@ -1,14 +1,14 @@
 {
 	"require": {
     	"filp/whoops": "1.*",
-    	"phpmailer/phpmailer": "~5.2",
+    	"phpmailer/phpmailer": "~5.2"
   	},
   	"autoload": {
   		"psr-4": {
-       		"Core\\": "app/src",
-       		"Controllers\\": "app/controllers",
+       		"Core\\": "core/",
             "Models\\": "app/models",
-            "Helpers\\": "app/helpers"
+            "Controllers\\": "app/controllers",
+            "Helpers\\": "app/helpers/"
     	}
     }
 }

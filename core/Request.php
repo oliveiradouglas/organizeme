@@ -28,39 +28,9 @@ class Request {
 	    		&& method_exists($this->instantiateControllerObject($url[0]), $url[1]))
 	    	) {
 	        return true;
-	    } else {
-	    	return false;
 	    }
-	}
 
-	private function mountCallToErrorPage(){
-		$url = [
-			0 => 'Error',
-			1 => 'pageNotFound',
-		];
-
-		return $url;
-	}
-
-	private function mountCallToHomePage(){
-		if (\Controllers\UserController::isLogged()) {
-			$url = [
-				0 => 'project',
-				1 => 'listProjects'
-			];
-		} else {
-			$url = [
-				0 => 'home',
-				1 => 'index'
-			];
-		}
-
-		return $url;
-	}
-	
-	private function instantiateControllerObject($controllerName){
-	    $controller = $this->prepareClassNameController($controllerName);
-	    return new $controller();
+	    return false;
 	}
 
 	private function prepareClassNameController($controllerName){
@@ -68,6 +38,26 @@ class Request {
 	    $classNameController = "\\Controllers\\{$controllerName}Controller";
 	    return $classNameController;
 	}
+
+	private function instantiateControllerObject($controllerName){
+	    $controller = $this->prepareClassNameController($controllerName);
+	    return new $controller();
+	}
+
+	private function mountCallToErrorPage(){
+		return ['Error', 'pageNotFound'];
+	}
+
+	private function mountCallToHomePage(){
+		if (\Models\UserModel::isLogged()) {
+			$url = ['project','listProjects'];
+		} else {
+			$url = ['home', 'index'];
+		}
+
+		return $url;
+	}
+	
 }
 
 ?>
