@@ -8,109 +8,82 @@ class ProjectController extends \Core\Controller {
 		parent::__construct();
 	} 
 
+	private function index() {
+		$listProjects = generateLink('project', 'listProjects');
+		$this->view->redirectToPage($listProjects);
+	}
+
 	public function listProjects(){
-		verifyUserIsLogged();
+		\Models\UserModel::verifyUserIsLogged();
 		$projects = [];
 
 		try {
-			$where = [
-				'user_id' => $_SESSION['user']['id'],
-				'active'  => 1,
-			];
-
+			$where    = ['user_id' => $_SESSION['user']['id']];
 			$projects = $this->model->find($where);
 		} catch (Exception $e){
 			$this->alert->printAlert('system', "QUERY_ERROR", false);
 		}
 
-		$tableHeader = [
-			'name'     => 'Nome',
-		];
-
-		$this->view->assignVariable('tableHeader', $tableHeader);
+		$this->view->assignVariable('tableHeader', ['name' => 'Nome']);
 		$this->view->assignVariable('projects', $projects);
 
 		$this->view->createPage('Project', 'listProjects');
 	}
 
 	public function register() {
-		verifyUserIsLogged();
-		$this->view->createPage('Project', 'register');
-	}
+		\Models\UserModel::verifyUserIsLogged();
 
-	public function saveRegister() {
-		verifyUserIsLogged();
-		validatePost('project', 'project');
-	
-		$dataProject            = $_POST['project'];
-		$dataProject['user_id'] = $_SESSION['user']['id'];
-
-		if (!validateRequiredFields($this->model->requiredFields, $dataProject)) {
-			$this->alert->printAlert('system', "FILL_REQUIRED_FIELDS", false);
-			$this->view->redirectToPage(generateLink('project', 'register'));
+		if (!$this->postExists('project')) {
+			$this->view->createPage('Project', 'register');
+			exit();
 		}
 
-		$returnSave = $this->model->save($dataProject);
-		
-		$this->alert->printAlert('project', "REGISTER", $returnSave);
-		
-		$this->view->redirectToPage(generateLink('project', 'listProjects'));
+		try {
+			$this->model->create();
+			$registred = true;
+		} catch (Exception $e) {
+			$registred = false;
+		}
+
+		$this->alert->printAlert('project', "REGISTER", $registred);
+		$this->index();
 	}
 
 	public function edit(array $url) {
-		verifyUserIsLogged();
+		\Models\UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project');
+		$project = $this->model->loadProject($url[2]);
 
-		$project = $this->loadProject($url[2]);
-
-		$this->view->assignVariable('project', $project[0]);
-		$this->view->createPage('Project', 'edit');
-	}
-
-	private function loadProject($project_id) {
-		$where = [
-			'id'      => $project_id,
-			'user_id' => $_SESSION['user']['id'],
-			'active'  => 1,
-		];
-
-		$project = $this->model->find($where);
-
-		if (empty($project)) {
-			$this->alert->printAlert('project', 'PROJECT_NOT_FOUND', false);
-			$this->view->redirectToPage(generateLink('project', 'listProjects'));
+		if (!$this->postExists('project')) {
+			$this->view->assignVariable('project', $project);
+			$this->view->createPage('Project', 'edit');
+			exit();
 		}
 
-		return $project;
-	}
-
-	public function saveEdit(array $url) {
-		verifyUserIsLogged();
-		validatePost('project', 'project');
-		$this->validateFillTheId($url, 'project');
-
-		$this->loadProject($url[2]);
-
-		if (!validateRequiredFields($this->model->requiredFields, $_POST['project'])) {
-			$this->alert->printAlert('system', "FILL_REQUIRED_FIELDS", false);
-			$this->view->redirectToPage(generateLink('project', 'register'));
+		try {
+			$this->model->edit($project['id']);
+			$edited = true;
+		} catch (Exception $e) {
+			$edited = false;
 		}
 
-		$returnEdit = $this->model->update($_POST['project'], $url[2]);
-
-		$this->alert->printAlert('project', 'EDIT', $returnEdit);
-		$this->view->redirectToPage(generateLink('project', 'listProjects'));
+		$this->alert->printAlert('project', 'EDIT', $edited);
+		$this->index();
 	}
 
 	public function delete(array $url) {
-		verifyUserIsLogged();
+		\Models\UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project');
 
-		$this->loadProject($url[2]);
+		try {
+			$this->model->loadProject($url[2]);
+			$this->model->update(['active' => '0'], $url[2]);
+			$deleted = true;
+		} catch (Exception $e) {
+			$deleted = false;
+		}
 
-		$returnDelete = $this->model->update(['active' => '0'], $url[2]);
-
-		$this->alert->printAlert('project', 'DELETE', $returnDelete);
-		$this->view->redirectToPage(generateLink('project', 'listProjects'));	
+		$this->alert->printAlert('project', 'DELETE', $deleted);
+		$this->index();
 	}
 }

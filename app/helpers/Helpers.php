@@ -54,4 +54,10 @@ function verifyUserIsLogged() {
     }
 }
 
+function showErrorPage() {
+    $view = new \Core\View();
+    $view->createPage('error', 'pageNotFound');
+    exit();
+}
+
 ?>

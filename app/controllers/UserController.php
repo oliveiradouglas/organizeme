@@ -27,7 +27,7 @@ class UserController extends \Core\Controller {
 	public function register(){
 		if (!$this->postExists('user')) {
 			$this->view->createPage('User', 'register');
-			return true;
+			exit();
 		}
 
 		try {
@@ -56,7 +56,6 @@ class UserController extends \Core\Controller {
 			}
 			
 			$this->alert->printAlert('user', "EDIT", $edit);
-			$this->view->redirectToPage($_SERVER['HTTP_REFERER']);
 		}
 
 		$this->view->assignVariable('user', $this->loadUser($userId));

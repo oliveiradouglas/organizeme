@@ -18,6 +18,44 @@ class ProjectModel extends \Core\Model {
 					WHERE p.user_id = {$_SESSION['user']['id']}
 					AND p.active = 1";
 	}
+
+	public function loadProject($projectId) {
+		$where = [
+			'id'      => $projectId,
+			'user_id' => $_SESSION['user']['id'],
+		];
+
+		$project = $this->find($where);
+
+		if (empty($project)) {
+			$alert = new \Helpers\Alert();
+			$alert->printAlert('project', 'PROJECT_NOT_FOUND', false);
+
+			$view = new \Core\View();
+			$view->redirectToPage(generateLink('project', 'listProjects'));
+		}
+
+		return $project[0];
+	}
+
+	public function create() {
+		$dataProject = $this->loadPostProject();
+		$this->validateRequiredFields($this->requiredFields, $dataProject);
+		$this->save($dataProject);
+	}
+
+	public function edit($projectId) {
+		$dataProject = $this->loadPostProject();
+		$this->validateRequiredFields($this->requiredFields, $dataProject);
+		$this->update($dataProject, $projectId);
+	}
+
+	private function loadPostProject() {
+		$dataProject            = $_POST['project'];
+		$dataProject['user_id'] = $_SESSION['user']['id'];
+
+		return $dataProject;
+	}
 }
 
 ?>

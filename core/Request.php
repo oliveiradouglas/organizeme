@@ -7,7 +7,7 @@ class Request {
 		$url = $this->prepareUrl();
 
 		if (!$this->requestIsValid($url)) {
-			$url = $this->mountCallToErrorPage();
+			showErrorPage();
 		} else if (!isset($url[0]) || empty($url[0])) {
 			$url = $this->mountCallToHomePage();
 		}
@@ -44,10 +44,6 @@ class Request {
 	    return new $controller();
 	}
 
-	private function mountCallToErrorPage(){
-		return ['Error', 'pageNotFound'];
-	}
-
 	private function mountCallToHomePage(){
 		if (\Models\UserModel::isLogged()) {
 			$url = ['project','listProjects'];
@@ -57,7 +53,6 @@ class Request {
 
 		return $url;
 	}
-	
 }
 
 ?>

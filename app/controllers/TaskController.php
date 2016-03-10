@@ -9,7 +9,7 @@ class TaskController extends \Core\Controller {
 	} 
 
 	public function listTasks(array $url){
-		verifyUserIsLogged();
+		\Models\UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project');
 		$tasks = [];
 
@@ -40,7 +40,7 @@ class TaskController extends \Core\Controller {
 	}
 
 	public function register(array $url) {
-		verifyUserIsLogged();
+		\Models\UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project');
 
 		$contactsModel = new \Models\ContactsModel();
@@ -72,7 +72,7 @@ class TaskController extends \Core\Controller {
 	}
 
 	public function edit(array $url) {
-		verifyUserIsLogged();
+		\Models\UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project', 'task');
 
 		$task = $this->loadTask($url[3], $url[2]);
@@ -136,7 +136,7 @@ class TaskController extends \Core\Controller {
 	}
 
 	public function visualize(array $url) {
-		verifyUserIsLogged();
+		\Models\UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project', 'task');
 
 		$task = $this->loadTask($url[3], $url[2]);
@@ -146,7 +146,7 @@ class TaskController extends \Core\Controller {
 	}
 
 	public function delete(array $url) {
-		verifyUserIsLogged();
+		\Models\UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project', 'task');
 
 		$this->loadTask($url[3], $url[2], ['creator_id' => $_SESSION['user']['id']]);

@@ -21,7 +21,8 @@ class UserModel extends \Core\Model {
 		$user = $this->find($accessData);
 
 		if (empty($user)) {
-			$this->alert->printAlert('user', "INVALID_LOGIN", false);
+			$alert = new \Helpers\Alert();
+			$alert->printAlert('user', "INVALID_LOGIN", false);
 			return false;
 		} 
 	
@@ -33,12 +34,12 @@ class UserModel extends \Core\Model {
 		$_SESSION['user']['name'] = $user['name'];
 	}
 
-	public function verifyUserIsLogged() {
+	public static function verifyUserIsLogged() {
 		if (!self::isLogged()) {
 		    $alert = new \Helpers\Alert();
 		    $alert->printAlert('user', 'USER_NOT_LOGGED', false);
 		    
-		    $view = new View();
+		    $view = new \Core\View();
 		    $view->redirectToPage(DOMAIN);
 		}
 	}
@@ -58,6 +59,7 @@ class UserModel extends \Core\Model {
 		$dataUser = filterArrayData($_POST['user']);
 		$this->validateRequiredFields($this->requiredFields, $dataUser);
 		$this->update($dataUser, $userId);
+		$_SESSION['user']['name'] = $dataUser['name'];
 	}
 
 	public function passwordRecovery() {
