@@ -66,6 +66,7 @@ class Alert {
 				'ACCEPT_CONTACT'   => 'Ocorreu algum erro ao aceitar o contato!',
 				'CURRENT_USER'     => 'Você não pode solocitar amizade do próprio usuário!',
 				'EXISTING_CONTACT' => 'O usuário informado ja é seu amigo!',
+				'LOAD_CONTACTS'    => 'Ocorreu algum erro ao carregar os contatos!',
 			],
 		],
 		'success' => [

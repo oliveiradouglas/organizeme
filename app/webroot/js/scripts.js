@@ -26,7 +26,8 @@ $(document).ready(function(){
 	$('.date').datepicker({
 		format: 'dd/mm/yyyy',
 		language: 'pt-BR',
-		autoclose: true
+		autoclose: true,
+		todayHighlight: true,
 	});
 });
 

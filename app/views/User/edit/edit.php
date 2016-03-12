@@ -30,7 +30,7 @@
 						    	</label>
 
 						    	<div class="col-sm-7"> 
-						    		<input type="email" class="form-control" id="email" placeholder="Email" name="user[email]" maxlenght="100" value="<?= htmlspecialchars($user['email']) ?>" required>
+						    		<input type="email" class="form-control" id="email" placeholder="Email" maxlenght="100" value="<?= htmlspecialchars($user['email']) ?>" required disabled />
 						    	</div>
 						  	</div>
 

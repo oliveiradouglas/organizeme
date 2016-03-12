@@ -8,112 +8,101 @@ class TaskController extends \Core\Controller {
 		parent::__construct();
 	} 
 
+	private function index($projectId) {
+		$listTasks = generateLink('task', 'listTasks', [$projectId]);
+		$this->view->redirectToPage($listTasks);
+	}
+
 	public function listTasks(array $url){
 		\Models\UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project');
-		$tasks = [];
 
 		try {
-			$andWhere = [
-				'project_id' => $url[2],
-				'active'     => 1,
-			];
-
-			$tasks = $this->model->find($andWhere);
+			$tasks = $this->model->find(['project_id' => $url[2]]);
+			array_filter($tasks, [$this->model, 'translateConclusion']);
+			
+			$this->view->assignVariable('tableHeader', $this->model->getHeaderOfListing());
+			$this->view->assignVariable('projectId', $url[2]);
+			$this->view->assignVariable('tasks', $tasks);
+			$this->view->createPage('Task', 'listTasks');
 		} catch (Exception $e){
 			$this->alert->printAlert('system', "QUERY_ERROR", false);
 		}
-
-		$tableHeader = [
-			'name'      => 'Nome',
-			'due_date'  => 'Data de vencimento',
-			'completed' => 'Concluída'
-		];
-
-		array_filter($tasks, [$this->model, 'translateConclusion']);
-
-		$this->view->assignVariable('tableHeader', $tableHeader);
-		$this->view->assignVariable('project_id', $url[2]);
-		$this->view->assignVariable('tasks', $tasks);
-
-		$this->view->createPage('Task', 'listTasks');
 	}
+
+	/**
+	* @param $url[2] = id do projeto
+	*/
 
 	public function register(array $url) {
 		\Models\UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project');
 
-		$contactsModel = new \Models\ContactsModel();
-		$performers    = $contactsModel->searchMyContacts();
-		$this->view->assignVariable('performers', $performers);
-
-		$this->view->assignVariable('project_id', $url[2]);
-		$this->view->createPage('Task', 'register');
+		if ($this->postExists('task')) 
+			$this->saveRecord();
+		
+		$this->loadAndAssignPerformers($url[2]);
+		$this->view->assignVariable('projectId', $url[2]);
+		$this->view->createPage('Task', 'register');	
 	}
-
-	public function saveRegister() {
-		verifyUserIsLogged();
-		validatePost('task', 'task');
-	
-		$dataTask               = filterArrayData($_POST['task']);
-		$dataTask['creator_id'] = $_SESSION['user']['id'];
-
-		if (!validateRequiredFields($this->model->requiredFields, $dataTask)) {
-			$this->alert->printAlert('system', "FILL_REQUIRED_FIELDS", false);
-			$this->view->redirectToPage(generateLink('project', 'listProjects'));
+		
+	private function saveRecord() {
+		try {
+			$this->model->create();
+			$registred = true;
+		} catch (Exception $e) {
+			$registred = false;
 		}
 
-		$project_id = $dataTask['project_id'];
-
-		$returnSave = $this->model->save($dataTask);
-		
-		$this->alert->printAlert('task', "REGISTER", $returnSave);
-		$this->view->redirectToPage(generateLink('task', 'listTasks', [$project_id]));
+		$this->alert->printAlert('task', 'REGISTER', $registred);
+		$this->index($_POST['task']['project_id']);
 	}
+
+	private function loadAndAssignPerformers($projectId) {
+		try {
+			$contactsModel = new \Models\ContactsModel();
+			$performers    = $contactsModel->searchMyContacts();
+			$this->view->assignVariable('performers', $performers);
+		} catch (Exception $e) {
+			$this->alert->printAlert('contacts', 'LOAD_CONTACTS', false);
+			$this->index($projectId);
+		}
+	}
+
+	/**
+	* @param $url[3] = id da tarefa
+	* @param $url[2] = id do projeto
+	*/
 
 	public function edit(array $url) {
 		\Models\UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project', 'task');
 
-		$task = $this->loadTask($url[3], $url[2]);
-		$this->view->assignVariable('task', $task[0]);
+		if ($this->postExists('task')) {
+			$this->saveEdit();
+		}
 
-		$contactsModel = new \Models\ContactsModel();
-		$performers    = $contactsModel->searchMyContacts();
-		$this->view->assignVariable('performers', $performers);
-		
+		$task = $this->model->loadTask($url[3], $url[2]);
+		$this->view->assignVariable('task', $task[0]);
+		$this->loadAndAssignPerformers($url[2]);
 		$this->view->createPage('Task', 'edit');
 	}
 
-	private function loadTask($task_id, $project_id, array $extraResearch = []) {
-		$where = [
-			'id'         => $task_id,
-			'project_id' => $project_id,
-			'active'     => 1,
-		];
-
-		if (!empty($extraResearch)) $where = array_merge($where, $extraResearch);
-
-		$task = $this->model->find($where);
-
-		if (empty($task) ||	
-			($task[0]['creator_id'] != $_SESSION['user']['id'] && $task[0]['performer_id'] != $_SESSION['user']['id'])) {
-
-			if (empty($extraResearch)) {
-				$this->alert->printAlert('task', 'TASK_NOT_FOUND', false);
-			} else {
-				$this->alert->printAlert('system', 'ERROR_OPERATION', false);
-			}
-
-			$this->view->redirectToPage(generateLink('task', 'listTasks', [$project_id]));
+	private function saveEdit() {
+		try {
+			$this->model->edit();
+			$registred = true;
+		} catch (Exception $e) {
+			$registred = false;
 		}
-
-		return $task;
+		
+		$this->alert->printAlert('task', 'REGISTER', $registred);
+		$this->index($_POST['task']['project_id']);
 	}
 
 	public function saveEdit(array $url) {
-		verifyUserIsLogged();
-		validatePost('task', 'task');
+		\Models\UserModel::verifyUserIsLogged();
+		$this->validateFillTheId($url, 'project', 'task');
 		$this->validateFillTheId($url, 'project', 'task');
 
 		$this->loadTask($url[3], $url[2]);

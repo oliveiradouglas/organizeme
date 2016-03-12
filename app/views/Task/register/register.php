@@ -12,9 +12,9 @@
 				</div>
 
 				<div class="panel-body">
-					<form class="form-horizontal" role="form" method="post" id="form-validate" action="<?= generateLink('task', 'saveRegister'); ?>">
+					<form class="form-horizontal" role="form" method="post" id="form-validate" action="<?= generateLink('task', 'register', [$projectId]); ?>">
 
-						<input type="hidden" name="task[project_id]" value="<?= $project_id; ?>" />
+						<input type="hidden" name="task[project_id]" value="<?= $projectId; ?>" />
 
 					    <div class="form-group">
 					    	<label class="control-label col-sm-3" for="performer">

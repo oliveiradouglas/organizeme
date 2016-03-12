@@ -5,7 +5,7 @@
 		<ol class="breadcrumb" style="background-color:#fff">
 			<li>
 		  		<div class="btn-group" role="group">
-		    		<a href="<?= generateLink('task', 'register', [$project_id]); ?>" type="button" class="btn btn-success">
+		    		<a href="<?= generateLink('task', 'register', [$projectId]); ?>" type="button" class="btn btn-success">
 		      			<span class="glyphicon glyphicon-plus"></span>
 		      			Nova tarefa
 		    		</a>

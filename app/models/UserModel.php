@@ -4,11 +4,9 @@ namespace Models;
 
 class UserModel extends \Core\Model {
 	public function __construct(){
-		$this->table = 'user';
-		parent::__construct();
+		parent::__construct('user');
+		$this->setRequiredField('name');
 	}
-
-	private $requiredFields = ['name', 'email'];
 
 	public static function isLogged(){
 		return (isset($_SESSION['user']['id']) ? true : false);
@@ -46,18 +44,17 @@ class UserModel extends \Core\Model {
 
 	public function create() {
 		$dataUser = filterArrayData($_POST['user']);
-		$this->setRequiredField('password');
+		$this->setRequiredField('password', 'email');
 		$this->validateRequiredFields($this->requiredFields, $dataUser);
 		$this->save($dataUser);
-	}
-
-	public function setRequiredField($nameField) {
-		$this->requiredFields[] = $nameField;
 	}
 
 	public function edit($userId) {
 		$dataUser = filterArrayData($_POST['user']);
 		$this->validateRequiredFields($this->requiredFields, $dataUser);
+
+		if (empty($dataUser['password'])) unset($dataUser['password']);
+
 		$this->update($dataUser, $userId);
 		$_SESSION['user']['name'] = $dataUser['name'];
 	}
@@ -69,8 +66,10 @@ class UserModel extends \Core\Model {
 			throw new \Exception("Usuário não encontrado para recuperar a senha!");
 		}
 
+		$newPassword = md5(mt_rand());
+
 		$user             = $user[0];
-		$user['password'] = encryptPassword(md5(mt_rand()));
+		$user['password'] = encryptPassword($newPassword);
 		$this->update($user, $user['id']);
 
 		return $this->sendEmailPasswordRecovery($user, $newPassword);

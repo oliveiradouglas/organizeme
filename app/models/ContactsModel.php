@@ -4,11 +4,9 @@ namespace Models;
 
 class ContactsModel extends \Core\Model {
 	public function __construct(){
-		$this->table = 'contacts';
-		parent::__construct();
+		parent::__construct('contacts');
+		$this->setRequiredField('user1', 'user2');
 	}
-
-	public $requiredFields = ['user1', 'user2'];
 
 	public function searchMyContacts() {
 		$query = "SELECT c.id, u.id as user_id, u.name 

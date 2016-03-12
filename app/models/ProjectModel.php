@@ -4,11 +4,9 @@ namespace Models;
 
 class ProjectModel extends \Core\Model {
 	public function __construct(){
-		$this->table = 'project';
-		parent::__construct();
+		parent::__construct('project');
+		$this->setRequiredField('name', 'user_id');
 	}
-
-	public $requiredFields = ['name', 'user_id'];
 
 	public function searchProjects() {
 		$query = "SELECT *

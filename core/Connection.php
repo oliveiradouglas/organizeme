@@ -3,7 +3,7 @@
 namespace Core;
 
 class Connection {
-	public function openConnection(){
+	public static function openConnection(){
 		$mysqli = new \MySQLi(DB_HOST, DB_USER, DB_PASSWORD, DB_SCHEMA);
 		
 		if ($mysqli->connect_errno) {
@@ -14,7 +14,7 @@ class Connection {
 		return $mysqli;
 	}
 
-	public function closeConnection($connection){
+	public static function closeConnection($connection){
 		$close = $connection->close();
 
 		if(!$close){

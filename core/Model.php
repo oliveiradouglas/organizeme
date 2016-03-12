@@ -4,11 +4,11 @@ namespace Core;
 
 abstract class Model {
 	protected $table;
-	protected $connection;
+	protected $requiredFields;
 
-	public function __construct(){
-		$this->connection = new \Core\Connection();
-	}
+	public function __construct($table) {
+		$this->table = $table;
+	}	
 
 	public function findAll(){
 		$query = $this->prepareBasicQuery(true);
@@ -51,9 +51,9 @@ abstract class Model {
 	}
 
 	protected function executeQuery($query){
-		$mysqli      = $this->connection->openConnection();
+		$mysqli      = Connection::openConnection();
 		$returnQuery = $mysqli->query($query);
-		$this->connection->closeConnection($mysqli);
+		Connection::closeConnection($mysqli);
 
 		return $returnQuery;
 	}
@@ -108,13 +108,24 @@ abstract class Model {
 		}
 	}
 
+	public function setRequiredField() {
+		$nameFields = func_get_args();
+
+		foreach ($nameFields as $nameField) {
+			if (!is_string($nameField)) 
+				throw new \Exception("O nome do campo deve ser uma string!");
+			
+			$this->requiredFields[] = $nameField;
+		}
+	}
+	
 	protected function validateRequiredFields($requiredFields, $data){
 	    foreach ($requiredFields as $requiredField) {
 	        if (!isset($data[$requiredField]) || empty($data[$requiredField])) {
 	            throw new \Exception("Os campos obrigatórios não foram preenchidos!");
 	        }
 	    }
-	}	
+	}
 }
 
 ?>
