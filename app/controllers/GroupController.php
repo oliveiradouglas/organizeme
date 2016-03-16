@@ -19,7 +19,7 @@ class GroupController extends \Core\Controller {
 			];
 
 			$groups = $this->model->find($where);
-		} catch (Exception $e){
+		} catch (\Exception $e){
 			$this->alert->printAlert('system', "QUERY_ERROR", false);
 		}
 

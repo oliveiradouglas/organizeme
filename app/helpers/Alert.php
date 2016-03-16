@@ -8,7 +8,7 @@ class Alert {
 
 		try {
 			$message = $this->messages[$type][$controllerName][$messageIndex];
-		} catch (Exception $e){
+		} catch (\Exception $e){
 			$message = 'Ocorreu algum erro ao processar a operação, contate o administrador.';
 		}
 

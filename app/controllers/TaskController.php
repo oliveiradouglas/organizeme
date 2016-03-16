@@ -1,6 +1,7 @@
 <?php
 
 namespace Controllers;
+use Models\UserModel;
 
 class TaskController extends \Core\Controller {
 	public function __construct(){
@@ -14,7 +15,7 @@ class TaskController extends \Core\Controller {
 	}
 
 	public function listTasks(array $url){
-		\Models\UserModel::verifyUserIsLogged();
+		UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project');
 
 		try {
@@ -25,7 +26,7 @@ class TaskController extends \Core\Controller {
 			$this->view->assignVariable('projectId', $url[2]);
 			$this->view->assignVariable('tasks', $tasks);
 			$this->view->createPage('Task', 'listTasks');
-		} catch (Exception $e){
+		} catch (\Exception $e){
 			$this->alert->printAlert('system', "QUERY_ERROR", false);
 		}
 	}
@@ -35,7 +36,7 @@ class TaskController extends \Core\Controller {
 	*/
 
 	public function register(array $url) {
-		\Models\UserModel::verifyUserIsLogged();
+		UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project');
 
 		if ($this->postExists('task')) 
@@ -47,10 +48,10 @@ class TaskController extends \Core\Controller {
 	}
 		
 	private function saveRecord() {
-		try {
+		try {		
 			$this->model->create();
 			$registred = true;
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$registred = false;
 		}
 
@@ -63,7 +64,7 @@ class TaskController extends \Core\Controller {
 			$contactsModel = new \Models\ContactsModel();
 			$performers    = $contactsModel->searchMyContacts();
 			$this->view->assignVariable('performers', $performers);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$this->alert->printAlert('contacts', 'LOAD_CONTACTS', false);
 			$this->index($projectId);
 		}
@@ -75,74 +76,52 @@ class TaskController extends \Core\Controller {
 	*/
 
 	public function edit(array $url) {
-		\Models\UserModel::verifyUserIsLogged();
+		UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project', 'task');
 
-		if ($this->postExists('task')) {
-			$this->saveEdit();
-		}
-
 		$task = $this->model->loadTask($url[3], $url[2]);
-		$this->view->assignVariable('task', $task[0]);
+		if ($this->postExists('task')) 
+			$this->saveEdit($url[3], $url[2]);
+
+		$this->view->assignVariable('task', $task);
 		$this->loadAndAssignPerformers($url[2]);
 		$this->view->createPage('Task', 'edit');
 	}
 
-	private function saveEdit() {
+	private function saveEdit($taskId, $projectId) {
 		try {
-			$this->model->edit();
+			$this->model->edit($taskId);
 			$registred = true;
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$registred = false;
 		}
 		
-		$this->alert->printAlert('task', 'REGISTER', $registred);
-		$this->index($_POST['task']['project_id']);
-	}
-
-	public function saveEdit(array $url) {
-		\Models\UserModel::verifyUserIsLogged();
-		$this->validateFillTheId($url, 'project', 'task');
-		$this->validateFillTheId($url, 'project', 'task');
-
-		$this->loadTask($url[3], $url[2]);
-
-		$dataTask = filterArrayData($_POST['task']);
-
-		if (!isset($dataTask['completed'])) {
-			$dataTask['completed'] = '0';
-		}
-
-		if (!validateRequiredFields($this->model->requiredFields, $dataTask)) {
-			$this->alert->printAlert('system', "FILL_REQUIRED_FIELDS", false);
-			$this->view->redirectToPage(generateLink('task', 'register', [$url[2]]));
-		}
-
-		$returnEdit = $this->model->update($dataTask, $url[3]);
-
-		$this->alert->printAlert('task', 'EDIT', $returnEdit);
-		$this->view->redirectToPage(generateLink('task', 'listTasks', [$url[2]]));
+		$this->alert->printAlert('task', 'EDIT', $registred);
+		$this->index($projectId);
 	}
 
 	public function visualize(array $url) {
-		\Models\UserModel::verifyUserIsLogged();
+		UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project', 'task');
 
-		$task = $this->loadTask($url[3], $url[2]);
+		$task = $this->model->loadTask($url[3], $url[2]);
 
-		$this->view->assignVariable('task', $task[0]);
+		$this->view->assignVariable('task', $task);
 		$this->view->createPage('Task', 'visualize');
 	}
 
 	public function delete(array $url) {
-		\Models\UserModel::verifyUserIsLogged();
+		UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project', 'task');
 
-		$this->loadTask($url[3], $url[2], ['creator_id' => $_SESSION['user']['id']]);
+		try {
+			$this->model->delete($url[3], $url[2]);
+			$deleted = true;
+		} catch (\Exception $e) {
+			$deleted = false;
+		}
 
-		$returnDelete = $this->model->update(['active' => '0'], $url[3]);
-
-		$this->alert->printAlert('task', 'DELETE', $returnDelete);
-		$this->view->redirectToPage(generateLink('task', 'listTasks', [$url[2]]));	
+		$this->alert->printAlert('task', 'DELETE', $deleted);
+		$this->view->redirectToPage(generateLink('task', 'listTasks', [$url[2]]));
 	}
 }

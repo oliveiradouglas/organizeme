@@ -11,7 +11,7 @@
 		    		</a>
 		  		</div>
   			</li>
-  			<li>
+  			<!-- <li>
 		  		<div class="btn-group" role="group">
 		    		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 		      			Ações
@@ -27,7 +27,7 @@
 		      			</li>
 		    		</ul>
 		  		</div>
-  			</li>
+  			</li> -->
 		</ol>
 
 		<div class="table-responsive" style="margin:30px 0px;">

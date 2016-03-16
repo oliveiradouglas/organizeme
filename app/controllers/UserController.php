@@ -34,7 +34,7 @@ class UserController extends \Core\Controller {
 			$this->model->create();
 			$this->alert->printAlert('user', "REGISTER", true);
 			$this->login();
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$this->alert->printAlert('user', "ERROR_REGISTER", false);
 			$this->view->redirectToPage($_SERVER['HTTP_REFERER']);			
 		}
@@ -51,7 +51,7 @@ class UserController extends \Core\Controller {
 			try {
 				$this->model->edit($userId);
 				$edit = true;
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				$edit = false;
 			}
 			
@@ -102,7 +102,7 @@ class UserController extends \Core\Controller {
 		
 		try {
 			$passwordRecovery = $this->model->passwordRecovery();
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$passwordRecovery = false;
 		}
 		

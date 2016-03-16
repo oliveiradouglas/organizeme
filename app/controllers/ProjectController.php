@@ -20,7 +20,7 @@ class ProjectController extends \Core\Controller {
 		try {
 			$where    = ['user_id' => $_SESSION['user']['id']];
 			$projects = $this->model->find($where);
-		} catch (Exception $e){
+		} catch (\Exception $e){
 			$this->alert->printAlert('system', "QUERY_ERROR", false);
 		}
 
@@ -41,7 +41,7 @@ class ProjectController extends \Core\Controller {
 		try {
 			$this->model->create();
 			$registred = true;
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$registred = false;
 		}
 
@@ -63,7 +63,7 @@ class ProjectController extends \Core\Controller {
 		try {
 			$this->model->edit($project['id']);
 			$edited = true;
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$edited = false;
 		}
 
@@ -79,7 +79,7 @@ class ProjectController extends \Core\Controller {
 			$this->model->loadProject($url[2]);
 			$this->model->update(['active' => '0'], $url[2]);
 			$deleted = true;
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$deleted = false;
 		}
 

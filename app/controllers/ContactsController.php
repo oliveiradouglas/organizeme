@@ -18,7 +18,7 @@ class ContactsController extends \Core\Controller {
 
 		try {
 			$contacts = $this->model->searchMyContacts();
-		} catch (Exception $e){
+		} catch (\Exception $e){
 			$this->alert->printAlert('system', "QUERY_ERROR", false);
 		}
 

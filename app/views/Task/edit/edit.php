@@ -12,7 +12,7 @@
 				</div>
 
 				<div class="panel-body">
-					<form class="form-horizontal" role="form" method="post" id="form-validate" action="<?= generateLink('task', 'saveEdit', [$task['project_id'], $task['id']]); ?>">
+					<form class="form-horizontal" role="form" method="post" id="form-validate" action="<?= generateLink('task', 'edit', [$task['project_id'], $task['id']]); ?>">
 
 						<input type="hidden" name="task[creator_id]" value="<?= $task['creator_id']; ?>" />
 

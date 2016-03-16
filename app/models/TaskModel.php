@@ -5,7 +5,7 @@ namespace Models;
 class TaskModel extends \Core\Model {
 	public function __construct(){
 		parent::__construct('task');
-		$this->setRequiredField('creator_id', 'performer_id', 'name', 'due_date');
+		$this->setRequiredField('creator_id', 'performer_id', 'name', 'due_date', 'priority', 'description');
 	}
 
 	public function loadTasksToRemember() { 
@@ -38,7 +38,7 @@ class TaskModel extends \Core\Model {
 	}
 
 	public function create() {
-		$dataTask               = filterArrayData($_POST['task']);
+		$dataTask               = filterArrayData($_POST['task']);		
 		$dataTask['creator_id'] = $_SESSION['user']['id'];
 		$this->validateRequiredFields($this->requiredFields, $dataTask);
 		$this->save($dataTask);
@@ -61,7 +61,7 @@ class TaskModel extends \Core\Model {
 			$view->redirectToPage(generateLink('task', 'listTasks', [$projectId]));
 		}
 
-		return $task;
+		return $task[0];
 	}
 
 	private function taskEmptyOrCurrentUserIsNotRelatedTask($task) {
@@ -70,8 +70,19 @@ class TaskModel extends \Core\Model {
 				);
 	}
 
-	public function edit() {
-		
+	public function edit($taskId) {
+		$dataTask = filterArrayData($_POST['task']);
+
+		if (!isset($dataTask['completed']))
+			$dataTask['completed'] = '0';
+
+		$this->validateRequiredFields($this->requiredFields, $dataTask);
+		$this->update($dataTask, $taskId);
+	}
+
+	public function delete($taskId, $projectId) {
+		$this->loadTask($taskId, $projectId, ['creator_id' => $_SESSION['user']['id']]);
+		$this->update(['active' => '0'], $taskId);
 	}
 }
 
