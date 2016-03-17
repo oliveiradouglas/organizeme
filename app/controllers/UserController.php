@@ -12,16 +12,16 @@ class UserController extends \Core\Controller {
 		if ($this->postExists('user')) {
 			$this->model->login();
 		} else {
-			$alert->printAlert('user', "USER_POST_EMPTY", false);
+			Alert::displayAlert('user', "USER_POST_EMPTY", false);
 		}
 
-		$this->view->redirectToPage(DOMAIN);
+		redirectToPage(DOMAIN);
 	}
 
 	public function logout(){
 		unset($_SESSION['user']);
-		$this->alert->printAlert('user', "LOGOUT", true);
-		$this->view->redirectToPage(DOMAIN);
+		Alert::displayAlert('user', "LOGOUT", true);
+		redirectToPage(DOMAIN);
 	}
 
 	public function register(){
@@ -32,11 +32,11 @@ class UserController extends \Core\Controller {
 
 		try {
 			$this->model->create();
-			$this->alert->printAlert('user', "REGISTER", true);
+			Alert::displayAlert('user', "REGISTER", true);
 			$this->login();
 		} catch (\Exception $e) {
-			$this->alert->printAlert('user', "ERROR_REGISTER", false);
-			$this->view->redirectToPage($_SERVER['HTTP_REFERER']);			
+			Alert::displayAlert('user', "ERROR_REGISTER", false);
+			redirectToPage($_SERVER['HTTP_REFERER']);			
 		}
 	}
 
@@ -55,7 +55,7 @@ class UserController extends \Core\Controller {
 				$edit = false;
 			}
 			
-			$this->alert->printAlert('user', "EDIT", $edit);
+			Alert::displayAlert('user', "EDIT", $edit);
 		}
 
 		$this->view->assignVariable('user', $this->loadUser($userId));
@@ -66,8 +66,8 @@ class UserController extends \Core\Controller {
 		$user = $this->model->find(['id' => $userId, 'active' => 1]);
 		
 		if (empty($user)) {
-			$this->alert->printAlert('user', 'NOT_FOUND', false);
-			$this->view->redirectToPage(DOMAIN);
+			Alert::displayAlert('user', 'NOT_FOUND', false);
+			redirectToPage(DOMAIN);
 		}
 
 		return $user[0];
@@ -75,8 +75,8 @@ class UserController extends \Core\Controller {
 
 	private function verifyIdUserEditIsLoggedUser($idUserEdit) {
 		if (!isset($_SESSION['user']) || $_SESSION['user']['id'] != $idUserEdit) {
-			$this->alert->printAlert('system', 'ERROR_OPERATION', false);
-			$this->view->redirectToPage(DOMAIN);
+			Alert::displayAlert('system', 'ERROR_OPERATION', false);
+			redirectToPage(DOMAIN);
 		}
 	}
 
@@ -106,7 +106,7 @@ class UserController extends \Core\Controller {
 			$passwordRecovery = false;
 		}
 		
-		$this->alert->printAlert('user', "PASSWORD_RECOVERY", $passwordRecovery);
-		$this->view->redirectToPage(DOMAIN);
+		Alert::displayAlert('user', "PASSWORD_RECOVERY", $passwordRecovery);
+		redirectToPage(DOMAIN);
 	}
 }

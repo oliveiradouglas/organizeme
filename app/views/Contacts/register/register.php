@@ -11,14 +11,14 @@
 				</div>
 
 				<div class="panel-body">
-					<form class="form-horizontal" role="form" method="post" id="form-validate" action="<?= generateLink('contacts', 'saveRegister'); ?>">
+					<form class="form-horizontal" role="form" method="post" id="form-validate" action="<?= generateLink('contacts', 'register'); ?>">
 					 	<div class="form-group">
 					    	<label class="control-label col-sm-3" for="email">
 					    		E-mail *
 					    	</label>
 					    	
 					    	<div class="col-sm-7">
-					      		<input type="text" class="form-control" id="email" placeholder="E-mail do usuário" name="contacts[email]" maxlenght="50" required>
+					      		<input type="email" class="form-control" id="email" placeholder="E-mail do usuário" name="contacts[email]" maxlenght="50" required>
 					    	</div>
 					  	</div>
 
@@ -34,3 +34,7 @@
 		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+	activeMenu('contacts');
+</script>

@@ -8,55 +8,76 @@ class ContactsModel extends \Core\Model {
 		$this->setRequiredField('user1', 'user2');
 	}
 
-	public function searchMyContacts() {
+	public function searchMyContacts($loadWaitingApproval = false, $loadCurrentUser = true) {
 		$query = "SELECT c.id, u.id as user_id, u.name 
-					FROM contacts c 
-					INNER JOIN user u ON c.user1 = u.id OR c.user2 = u.id
-					WHERE (c.user1 = {$_SESSION['user']['id']}
-					OR c.user2  = {$_SESSION['user']['id']})
-					AND c.active = 1
-					AND c.accepted = 1;";
+			FROM contacts c 
+			INNER JOIN user u ON c.user1 = u.id OR c.user2 = u.id
+			WHERE (c.user1 = {$_SESSION['user']['id']}
+			OR c.user2  = {$_SESSION['user']['id']})
+			AND c.active = 1";
+
+		$accepted = ($loadWaitingApproval ? "" : " AND c.accepted = 1") . ";";
+		$query   .= $accepted;
 
 		$returnQuery  = $this->executeQuery($query);
-
-		$dataCurrentUser = [
-			[
-				'user_id' => $_SESSION['user']['id'],
-				'name'    => $_SESSION['user']['name'] . " (Eu)"
-			]
-		];
-
 		$arrayRecords = $this->createArrayRecords($returnQuery);
-		$this->removeCurrentUser($arrayRecords);
 
-		$arrayRecords = array_merge($dataCurrentUser, $arrayRecords);
+		if ($loadCurrentUser) 
+			$this->prepareArrayCurrentUser($arrayRecords);
+		else
+			$this->removeCurrentUser($arrayRecords);
 
 		return $arrayRecords;
+	}
+
+	private function prepareArrayCurrentUser(&$arrayRecords) {
+		$dataCurrentUser = [
+			['id' => $_SESSION['user']['id'], 'user_id' => $_SESSION['user']['id'], 'name' => $_SESSION['user']['name'] . " (Eu)"]
+		];
+		
+		$this->removeCurrentUser($arrayRecords);
+		$arrayRecords = array_merge($dataCurrentUser, $arrayRecords);
 	}
 
 	private function removeCurrentUser(&$arrayRecords) {
 		$currentUserId = $_SESSION['user']['id'];
 		$ids           = array_column($arrayRecords, 'user_id');
 		
-		while(in_array($currentUserId, $ids)) {
-			$key = array_search($currentUserId, $ids);
-			unset($ids[$key], $arrayRecords[$key]);
+		$indexCurrentUser = array_search($currentUserId, $ids);
+		while($indexCurrentUser !== false) {
+			unset($ids[$indexCurrentUser], $arrayRecords[$indexCurrentUser]);
+			$indexCurrentUser = array_search($currentUserId, $ids);
 		}
+	}
+	
+	public function create($user2Id) {
+		$dataContact['user1'] = $_SESSION['user']['id'];
+		$dataContact['user2'] = $user2Id;
+
+		$this->validateRequiredFields($this->requiredFields, $dataContact);
+		$this->save($dataContact);
+	}
+
+	public function verifyExistingRequest($user2Id) {
+		if ($user2Id == $_SESSION['user']['id']) {
+			\Helpers\Alert::displayAlert('contacts', 'CURRENT_USER', false);
+			redirectToPage(generateLink('contacts', 'listContacts'));
+		}
+
+		$contact = $this->loadContact($user2Id);
+		debug($contact);
+		if (empty($contact)) return;
+		
+		$indexAlert = (($contact[0]['accepted']) ? 'EXISTING_CONTACT' : 'WAITING_APPROVAL');
+		\Helpers\Alert::displayAlert('contacts', $indexAlert, false);
+		redirectToPage(generateLink('contacts', 'listContacts'));
 	}
 
 	public function loadContact($user2Id) {
-		$query = "SELECT *
-					FROM contacts
-					WHERE (user1 = {$_SESSION['user']['id']}
-					AND user2 = {$user2Id} 
-					OR user1 = {$user2Id}
-					AND user2 = {$_SESSION['user']['id']})
-					AND active = 1";
+		$andWhere = [];
+		$orWhere  = [['user1' => $_SESSION['user']['id'], 'user2' => $user2Id], ['user1' => $user2Id, 'user2' => $_SESSION['user']['id']]];
 
-		$returnQuery  = $this->executeQuery($query);			
-		$arrayRecords = $this->createArrayRecords($returnQuery);
-
-		return $arrayRecords;
+		return $this->find($andWhere, $orWhere);
 	}
 }
 

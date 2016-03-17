@@ -56,8 +56,5 @@
 <?php include_once(PATH_ROOT . '/app/views/Container/deleteModal.php') ?>
 
 <script type="text/javascript">
-	$(document).ready(function(){
-		$('#li_contacts').addClass('active');
-	    $('#link_contacts').attr('id', 'ativo');
-	});
+	activeMenu('contacts');
 </script>

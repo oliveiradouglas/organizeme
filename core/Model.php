@@ -10,17 +10,8 @@ abstract class Model {
 		$this->table = $table;
 	}	
 
-	public function findAll(){
-		$query = $this->prepareBasicQuery(true);
-
-		$returnQuery  = $this->executeQuery($query);			
-		$arrayRecords = $this->createArrayRecords($returnQuery);
-
-		return $arrayRecords;
-	}
-
-	public function find($andWhere = [], array $orWhere = []){
-		$query = "{$this->prepareBasicQuery(false)} WHERE ";
+	public function find($andWhere = [], array $orWhere = [], $fields = '*'){
+		$query = "{$this->prepareBasicQuery($fields, false)} WHERE ";
 
 		if (!empty($andWhere) && !is_array($andWhere)) 	$andWhere = ['id' => $andWhere];
 		if (!isset($andWhere['active'])) $andWhere['active'] = 1;
@@ -29,14 +20,19 @@ abstract class Model {
 		$orWhere  = (empty($andWhere) && !empty($orWhere) || empty($orWhere) ? '' : ' OR ') . $this->mountStringMap($orWhere, ' OR ');
 
 		$query       .= "{$andWhere} {$orWhere};";
+
+		if (!empty($orWhere)) {
+			debug($query);
+		}
+
 		$returnQuery  = $this->executeQuery($query);
 		$arrayRecords = $this->createArrayRecords($returnQuery);
 
 		return $arrayRecords;
 	}
 
-	protected function prepareBasicQuery($closeQuery){
-		$basicQuery = "SELECT * FROM {$this->table}" . ($closeQuery ? ';' : ' ');
+	protected function prepareBasicQuery($fields, $closeQuery){
+		$basicQuery = "SELECT {$fields} FROM {$this->table}" . ($closeQuery ? ';' : ' ');
 		return $basicQuery;
 	}
 
@@ -117,6 +113,10 @@ abstract class Model {
 			
 			$this->requiredFields[] = $nameField;
 		}
+	}
+
+	public function getRequiredsFields() {
+		return $this->requiredFields;
 	}
 	
 	protected function validateRequiredFields($requiredFields, $data){

@@ -3,19 +3,19 @@
 namespace Helpers;
 
 class Alert {
-	public function printAlert($controllerName, $messageIndex, $success){
+	public static function displayAlert($controllerName, $messageIndex, $success){
 		$type    = (($success) ? 'success' : 'danger');
 
 		try {
-			$message = $this->messages[$type][$controllerName][$messageIndex];
+			$message = self::$messages[$type][$controllerName][$messageIndex];
 		} catch (\Exception $e){
 			$message = 'Ocorreu algum erro ao processar a operação, contate o administrador.';
 		}
 
-		$_SESSION['alert'] = $this->mountHtmlAlert($type, $message);
+		$_SESSION['alert'] = self::mountHtmlAlert($type, $message);
 	}
 
-	private function mountHtmlAlert($type, $message){
+	private static function mountHtmlAlert($type, $message){
 		$htmlAlert  = '<div class="alert alert-' . $type . ' text-center" id="message">';
 		$htmlAlert .= '<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>';
 		$htmlAlert .= $message . '</div>';
@@ -23,12 +23,13 @@ class Alert {
 		return $htmlAlert;
 	}
 
-	private $messages = [
+	private static $messages = [
 		'danger' => [
 			'system' => [
 				'QUERY_ERROR'          => 'Ocorreu algum erro ao buscar os dados!',
 				'ERROR_OPERATION'      => 'Você não pode realizar esta operação!',
 				'FILL_REQUIRED_FIELDS' => 'Você precisa preencher todos os campos obrigatórios!',
+				'OPERATION_UNKNOW'     => 'Operação não informada!',
 			],
 			'user' => [
 				'USER_POST_EMPTY'           => 'Você deve informar os dados do usuário!',
@@ -64,9 +65,11 @@ class Alert {
 				'WAITING_APPROVAL' => 'Ja existe uma solicitação de amizade para este contato!',
 				'PARAMETERS_WRONG' => 'Os parametros passados para função estão incorretos!', 
 				'ACCEPT_CONTACT'   => 'Ocorreu algum erro ao aceitar o contato!',
+				'REJECT_CONTACT'   => 'Ocorreu algum erro ao rejeitar o contato!',
 				'CURRENT_USER'     => 'Você não pode solocitar amizade do próprio usuário!',
 				'EXISTING_CONTACT' => 'O usuário informado ja é seu amigo!',
 				'LOAD_CONTACTS'    => 'Ocorreu algum erro ao carregar os contatos!',
+				'CONTACTS_ID'      => 'Contato não informado!',
 			],
 		],
 		'success' => [

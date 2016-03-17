@@ -44,20 +44,26 @@ function generateLink($controller, $action, array $parameters = []){
     return DOMAIN . "/{$controller}/{$action}/" . implode('/', $parameters);
 }
 
-function verifyUserIsLogged() {
-    if (!isset($_SESSION['user'])) {
-        $alert = new \Helpers\Alert();
-        $alert->printAlert('user', 'USER_NOT_LOGGED', false);
-        
-        $view = new \Core\View();
-        $view->redirectToPage(DOMAIN);
-    }
+function redirectToPage($link){
+    header("Location: {$link}");
+    exit();
 }
 
 function showErrorPage() {
     $view = new \Core\View();
     $view->createPage('error', 'pageNotFound');
     exit();
+}
+
+function debug($variable, $continue = false) {
+    if (is_array($variable)) {
+        echo "<pre>";
+        print_r($variable);
+    } else {
+        var_dump($variable);
+    }
+    
+    if (!$continue) exit();
 }
 
 ?>

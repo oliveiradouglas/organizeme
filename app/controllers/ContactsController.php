@@ -1,6 +1,8 @@
 <?php
 
 namespace Controllers;
+use \Models\UserModel;
+use \Helpers\Alert;
 
 class ContactsController extends \Core\Controller {
 	public function __construct(){
@@ -10,182 +12,110 @@ class ContactsController extends \Core\Controller {
 
 	public function index() {
 		$linkListContacts = generateLink('contacts', 'listContacts');
-		$this->view->redirectToPage($linkListContacts);
+		redirectToPage($linkListContacts);
 	}
 
 	public function listContacts(){
-		verifyUserIsLogged();
+		UserModel::verifyUserIsLogged();
 
 		try {
-			$contacts = $this->model->searchMyContacts();
-		} catch (\Exception $e){
-			$this->alert->printAlert('system', "QUERY_ERROR", false);
+			$contacts = $this->model->searchMyContacts(true, false);
+			$this->view->assignVariable('contacts', $contacts);
+			$this->view->assignVariable('tableHeader', ['name' => 'Nome']);
+		} catch (\Exception $e) {
+			Alert::displayAlert('system', "QUERY_ERROR", false);
 		}
-
-		$tableHeader = [
-			'name' => 'Nome',
-		];
-
-		$this->view->assignVariable('tableHeader', $tableHeader);
-		$this->view->assignVariable('contacts', $contacts);
 
 		$this->view->createPage('Contacts', 'listContacts');
 	}
 
 	public function register() {
-		verifyUserIsLogged();
-		$this->view->createPage('Contacts', 'register');
+		UserModel::verifyUserIsLogged();
+
+		try {
+			if ($this->postExists('contacts')) 
+				$this->saveRegister();
+			
+			$this->view->createPage('Contacts', 'register');
+		} catch (\Exception $e) {
+			$this->index();
+		}
 	}
 
 	public function saveRegister() {
-		verifyUserIsLogged();
-		validatePost('contacts', 'contacts');
-	
-		$user2 = $this->searchContact(['email' => $_POST['contacts']['email']]);
+		try {
+			$user2 = $this->searchUser(['email' => $_POST['contacts']['email']]);
+			$this->model->verifyExistingRequest($user2['id']);
+			$this->model->create($user2['id']);
 
-		$this->verifyExistingRequest($user2['id']);
-
-		$dataContact['user1'] = $_SESSION['user']['id'];
-		$dataContact['user2'] = $user2['id'];
-
-		if (!validateRequiredFields($this->model->requiredFields, $dataContact)) {
-			$this->alert->printAlert('system', "FILL_REQUIRED_FIELDS", false);
-			$this->view->redirectToPage(generateLink('contacts', 'register'));
-		}
-
-		$returnSave = $this->model->save($dataContact);
-
-		if (!$returnSave) {
-			$this->alert->printAlert('contacts', "REGISTER", false);
-		} else {
-			$returnSendApproval = $this->sendFriendRequest($user2);
-			$this->alert->printAlert('contacts', "WAITING_APPROVAL", $returnSendApproval);
+			Alert::displayAlert('contacts', "WAITING_APPROVAL", $returnSendApproval);
+		} catch (\Exception $e) {
+			echo $e->getMessage();exit();
+			Alert::displayAlert('contacts', "REGISTER", false);
 		}
 		
 		$this->index();
 	}
 
-	private function verifyExistingRequest($user2Id) {
-
-		if ($user2Id == $_SESSION['user']['id']) {
-			$this->alert->printAlert('contacts', 'CURRENT_USER', false);
-			$this->index();
-		}
-
-		$contact = $this->model->loadContact($user2Id);
-
-		if (!empty($contact)) {
-			if ($contact[0]['accepted']) {
-				$this->alert->printAlert('contacts', 'EXISTING_CONTACT', false);
-			} else {
-				$this->alert->printAlert('contacts', 'WAITING_APPROVAL', false);
-			}
-			
-			$this->index();
-		}
-
-		return true;
-	}
-
-	private function searchContact($where) {
-		$userModel = new \Models\UserModel();
-
-		$andWhere           = $where;
-		$andWhere['active'] = 1;
-
-		$user = $userModel->find($andWhere);
+	private function searchUser($where) {
+		$userModel = new UserModel();
+		$user      = $userModel->find($where, [], 'id');
 
 		if (empty($user)) {
-			$this->alert->printAlert('user', 'NOT_FOUND', false);
-			$this->view->redirectToPage(generateLink('contacts', 'register'));
+			Alert::displayAlert('user', 'NOT_FOUND', false);
+			redirectToPage(generateLink('contacts', 'register'));
 		}
 
 		return $user[0];
 	}
 
-	private function sendFriendRequest($user2) {
-		$mail = new \Helpers\Email();
-
-		$idsEncrypted  = base64_encode("{$user2['id']}/{$user2['email']}/{$user2['password']}/{$_SESSION['user']['id']}");
-		$linkForAccept = generateLink('contacts', 'acceptContact', [$idsEncrypted]);
-
-		$mail->assignVariable('nameUser1', $_SESSION['user']['name']);
-		$mail->assignVariable('nameUser2', $user2['name']);
-		$mail->assignVariable('linkForAccept', $linkForAccept);
-		$mail->setTemplate('friend_request');
-
-		return $mail->sendMail($user2, 'Solicitação de amizade');
-	}
-
+	/**
+	* @param $url[3] operação / 1 = aceitar 0 = reprovar
+	* @param $url[2] id do contato
+	*/
 	public function acceptContact(array $url) {
-		unset($_SESSION['user']);
-		$parameters = $this->validateParametersAcceptContact($url);
+		UserModel::verifyUserIsLogged();
+		$this->validateFillTheId($url, 'contact');
 
-		$andWhere = [
-			'id'       => $parameters[0],
-			'email'    => $parameters[1],
-			'password' => $parameters[2],
-		];
+		try {
+			if (!isset($url[3]) || ($url[3] != 1) && $url[3] != 0) {
+				Alert::displayAlert('system', "OPERATION_UNKNOW", $accepted);
+				$this->index();
+			}
 
-		$user = $this->searchContact($andWhere);
+			$this->model->update(['accepted' => $url[3], 'active' => $url[3]], $url[2]);
+			$success = true;
+		} catch (\Exception $e) {
+			$success = false;
+		}
 
-		$_SESSION['user']['id']   = $user['id'];
-		$_SESSION['user']['name'] = $user['name'];
-
-		$contact['accepted'] = 1;
-
-		$andWhere = [
-			'user1'  => $parameters[3],
-			'user2'  => $user['id'],
-			'active' => 1
-		];
-
-		$returnEdit = $this->model->update($contact, $andWhere);
-
-		$this->alert->printAlert('contacts', "ACCEPT_CONTACT", $returnEdit);
-
+		$operation = ($url[3] ? "ACCEPT" : "REJECT") . "_CONTACT";
+		Alert::displayAlert('contacts', $operation, $success);
 		$this->index();
 	}
 
-	private function validateParametersAcceptContact(array $url) {
-		$url2 = explode('/', base64_decode($url[2]));
-		
-		for ($i = 0; $i < 4; $i++) { 
-			if (!isset($url2[$i]) || empty($url2[$i])) {
-				$this->alert->printAlert('contacts', 'PARAMETERS_WRONG', false);
-				$this->view->redirectToPage(generateLink('home', 'index'));
-			}
-		}
-
-		return $url2;
-	}
-
 	public function delete(array $url) {
-		verifyUserIsLogged();
+		UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'contacts');
 
-		$currentUserId = $_SESSION['user']['id'];
+		try {
+			$currentUserId = $_SESSION['user']['id'];
+			$andWhere = ['id' => $url[2]];
+			$orWhere  = ['user1' => $currentUserId, 'user2' => $currentUserId];
+			$contact  = $this->model->find($andWhere, $orWhere);
 
-		$andWhere = [
-			'id'     => $url[2],
-			'active' => 1,
-		];
+			if (empty($contact) || ($contact[0]['user1'] != $currentUserId && $contact[0]['user2'] != $currentUserId)) {
+				Alert::displayAlert('contacts', 'NOT_FOUND', false);
+				$this->index();
+			}
 
-		$orWhere = [
-			'user1' => $currentUserId,
-			'user2' => $currentUserId
-		];
-
-		$contact = $this->model->find($andWhere, $orWhere);
-
-		if (empty($contact) || ($contact[0]['user1'] != $currentUserId && $contact[0]['user2'] != $currentUserId)) {
-			$this->alert->printAlert('contacts', 'NOT_FOUND', false);
-			$this->index();
+			$this->model->update(['active' => '0'], $url[2]);
+			$deleted = true;
+		} catch (\Exception $e) {
+			$deleted = false;
 		}
 
-		$returnDelete = $this->model->update(['active' => '0'], $url[2]);
-
-		$this->alert->printAlert('contacts', 'DELETE', $returnDelete);
+		Alert::displayAlert('contacts', 'DELETE', $returnDelete);
 		$this->index();
 	}
 }

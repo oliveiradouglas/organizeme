@@ -45,20 +45,13 @@ class TaskModel extends \Core\Model {
 	}
 
 	public function loadtask($taskId, $projectId, array $extraResearch = []) {
-		$where = [
-			'id'         => $taskId,
-			'project_id' => $projectId,
-		];
-
+		$where = ['id' => $taskId, 'project_id' => $projectId];
 		$where = array_merge($where, $extraResearch);
 		$task = $this->find($where);
 
 		if ($this->taskEmptyOrCurrentUserIsNotRelatedTask($task)) {
-			$alert = new \Helpers\Alert();
-			$alert->printAlert('task', 'TASK_NOT_FOUND', false);
-
-			$view = new \Core\View();
-			$view->redirectToPage(generateLink('task', 'listTasks', [$projectId]));
+			Alert::displayAlert('task', 'TASK_NOT_FOUND', false);
+			redirectToPage(generateLink('task', 'listTasks', [$projectId]));
 		}
 
 		return $task[0];

@@ -1,6 +1,7 @@
 <?php
 
 namespace Controllers;
+use \Models\UserModel;
 
 class ProjectController extends \Core\Controller {
 	public function __construct(){
@@ -10,18 +11,18 @@ class ProjectController extends \Core\Controller {
 
 	private function index() {
 		$listProjects = generateLink('project', 'listProjects');
-		$this->view->redirectToPage($listProjects);
+		redirectToPage($listProjects);
 	}
 
 	public function listProjects(){
-		\Models\UserModel::verifyUserIsLogged();
+		UserModel::verifyUserIsLogged();
 		$projects = [];
 
 		try {
 			$where    = ['user_id' => $_SESSION['user']['id']];
 			$projects = $this->model->find($where);
 		} catch (\Exception $e){
-			$this->alert->printAlert('system', "QUERY_ERROR", false);
+			Alert::displayAlert('system', "QUERY_ERROR", false);
 		}
 
 		$this->view->assignVariable('tableHeader', ['name' => 'Nome']);
@@ -31,7 +32,7 @@ class ProjectController extends \Core\Controller {
 	}
 
 	public function register() {
-		\Models\UserModel::verifyUserIsLogged();
+		UserModel::verifyUserIsLogged();
 
 		if (!$this->postExists('project')) {
 			$this->view->createPage('Project', 'register');
@@ -45,12 +46,12 @@ class ProjectController extends \Core\Controller {
 			$registred = false;
 		}
 
-		$this->alert->printAlert('project', "REGISTER", $registred);
+		Alert::displayAlert('project', "REGISTER", $registred);
 		$this->index();
 	}
 
 	public function edit(array $url) {
-		\Models\UserModel::verifyUserIsLogged();
+		UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project');
 		$project = $this->model->loadProject($url[2]);
 
@@ -67,12 +68,12 @@ class ProjectController extends \Core\Controller {
 			$edited = false;
 		}
 
-		$this->alert->printAlert('project', 'EDIT', $edited);
+		Alert::displayAlert('project', 'EDIT', $edited);
 		$this->index();
 	}
 
 	public function delete(array $url) {
-		\Models\UserModel::verifyUserIsLogged();
+		UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project');
 
 		try {
@@ -83,7 +84,7 @@ class ProjectController extends \Core\Controller {
 			$deleted = false;
 		}
 
-		$this->alert->printAlert('project', 'DELETE', $deleted);
+		Alert::displayAlert('project', 'DELETE', $deleted);
 		$this->index();
 	}
 }

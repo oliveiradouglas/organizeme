@@ -11,7 +11,7 @@ class TaskController extends \Core\Controller {
 
 	private function index($projectId) {
 		$listTasks = generateLink('task', 'listTasks', [$projectId]);
-		$this->view->redirectToPage($listTasks);
+		redirectToPage($listTasks);
 	}
 
 	public function listTasks(array $url){
@@ -25,10 +25,11 @@ class TaskController extends \Core\Controller {
 			$this->view->assignVariable('tableHeader', $this->model->getHeaderOfListing());
 			$this->view->assignVariable('projectId', $url[2]);
 			$this->view->assignVariable('tasks', $tasks);
-			$this->view->createPage('Task', 'listTasks');
 		} catch (\Exception $e){
-			$this->alert->printAlert('system', "QUERY_ERROR", false);
+			Alert::displayAlert('system', "QUERY_ERROR", false);
 		}
+		
+		$this->view->createPage('Task', 'listTasks');
 	}
 
 	/**
@@ -55,7 +56,7 @@ class TaskController extends \Core\Controller {
 			$registred = false;
 		}
 
-		$this->alert->printAlert('task', 'REGISTER', $registred);
+		Alert::displayAlert('task', 'REGISTER', $registred);
 		$this->index($_POST['task']['project_id']);
 	}
 
@@ -65,7 +66,7 @@ class TaskController extends \Core\Controller {
 			$performers    = $contactsModel->searchMyContacts();
 			$this->view->assignVariable('performers', $performers);
 		} catch (\Exception $e) {
-			$this->alert->printAlert('contacts', 'LOAD_CONTACTS', false);
+			Alert::displayAlert('contacts', 'LOAD_CONTACTS', false);
 			$this->index($projectId);
 		}
 	}
@@ -96,7 +97,7 @@ class TaskController extends \Core\Controller {
 			$registred = false;
 		}
 		
-		$this->alert->printAlert('task', 'EDIT', $registred);
+		Alert::displayAlert('task', 'EDIT', $registred);
 		$this->index($projectId);
 	}
 
@@ -121,7 +122,7 @@ class TaskController extends \Core\Controller {
 			$deleted = false;
 		}
 
-		$this->alert->printAlert('task', 'DELETE', $deleted);
-		$this->view->redirectToPage(generateLink('task', 'listTasks', [$url[2]]));
+		Alert::displayAlert('task', 'DELETE', $deleted);
+		redirectToPage(generateLink('task', 'listTasks', [$url[2]]));
 	}
 }

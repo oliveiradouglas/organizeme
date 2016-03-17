@@ -19,8 +19,7 @@ class UserModel extends \Core\Model {
 		$user = $this->find($accessData);
 
 		if (empty($user)) {
-			$alert = new \Helpers\Alert();
-			$alert->printAlert('user', "INVALID_LOGIN", false);
+			\Helpers\Alert::displayAlert('user', "INVALID_LOGIN", false);
 			return false;
 		} 
 	
@@ -34,11 +33,8 @@ class UserModel extends \Core\Model {
 
 	public static function verifyUserIsLogged() {
 		if (!self::isLogged()) {
-		    $alert = new \Helpers\Alert();
-		    $alert->printAlert('user', 'USER_NOT_LOGGED', false);
-		    
-		    $view = new \Core\View();
-		    $view->redirectToPage(DOMAIN);
+		    \Helpers\Alert::displayAlert('user', 'USER_NOT_LOGGED', false);
+		    redirectToPage(DOMAIN);
 		}
 	}
 

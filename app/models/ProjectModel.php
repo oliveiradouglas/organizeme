@@ -26,11 +26,8 @@ class ProjectModel extends \Core\Model {
 		$project = $this->find($where);
 
 		if (empty($project)) {
-			$alert = new \Helpers\Alert();
-			$alert->printAlert('project', 'PROJECT_NOT_FOUND', false);
-
-			$view = new \Core\View();
-			$view->redirectToPage(generateLink('project', 'listProjects'));
+			Alert::displayAlert('project', 'PROJECT_NOT_FOUND', false);
+			redirectToPage(generateLink('project', 'listProjects'));
 		}
 
 		return $project[0];

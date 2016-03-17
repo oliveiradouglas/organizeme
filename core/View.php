@@ -17,11 +17,6 @@ class View {
 	public function assignVariable($variableName, $value){
 		$this->assignVariables[$variableName] = $value;
 	}
-
-	public function redirectToPage($link){
-		header("Location: {$link}");
-		exit();
-	}
 }
 
 ?>
