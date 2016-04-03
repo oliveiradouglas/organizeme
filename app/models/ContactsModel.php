@@ -9,7 +9,7 @@ class ContactsModel extends \Core\Model {
 	}
 
 	public function searchMyContacts($loadWaitingApproval = false, $loadCurrentUser = true) {
-		$query = "SELECT c.id, u.id as user_id, u.name 
+		$query = "SELECT c.id, c.accepted, c.user2, u.id as user_id, u.name
 			FROM contacts c 
 			INNER JOIN user u ON c.user1 = u.id OR c.user2 = u.id
 			WHERE (c.user1 = {$_SESSION['user']['id']}
@@ -65,7 +65,6 @@ class ContactsModel extends \Core\Model {
 		}
 
 		$contact = $this->loadContact($user2Id);
-		debug($contact);
 		if (empty($contact)) return;
 		
 		$indexAlert = (($contact[0]['accepted']) ? 'EXISTING_CONTACT' : 'WAITING_APPROVAL');
@@ -74,10 +73,15 @@ class ContactsModel extends \Core\Model {
 	}
 
 	public function loadContact($user2Id) {
-		$andWhere = [];
-		$orWhere  = [['user1' => $_SESSION['user']['id'], 'user2' => $user2Id], ['user1' => $user2Id, 'user2' => $_SESSION['user']['id']]];
+		$filter1  = ['user1' => $_SESSION['user']['id'], 'user2' => $user2Id];
+		$filter2  = ['user1' => $user2Id, 'user2' => $_SESSION['user']['id']];
 
-		return $this->find($andWhere, $orWhere);
+		$contact = $this->find($filter1);
+
+		if (empty($contact)) 
+			$contact = $this->find($filter2);
+
+		return $contact;
 	}
 }
 

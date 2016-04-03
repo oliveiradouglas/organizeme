@@ -19,11 +19,7 @@ abstract class Model {
 		$andWhere = $this->mountStringMap($andWhere, ' AND ');
 		$orWhere  = (empty($andWhere) && !empty($orWhere) || empty($orWhere) ? '' : ' OR ') . $this->mountStringMap($orWhere, ' OR ');
 
-		$query       .= "{$andWhere} {$orWhere};";
-
-		if (!empty($orWhere)) {
-			debug($query);
-		}
+		$query .= "{$andWhere} {$orWhere};";
 
 		$returnQuery  = $this->executeQuery($query);
 		$arrayRecords = $this->createArrayRecords($returnQuery);

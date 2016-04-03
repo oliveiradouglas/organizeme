@@ -21,7 +21,7 @@ class ContactsController extends \Core\Controller {
 		try {
 			$contacts = $this->model->searchMyContacts(true, false);
 			$this->view->assignVariable('contacts', $contacts);
-			$this->view->assignVariable('tableHeader', ['name' => 'Nome']);
+			$this->view->assignVariable('tableHeader', ['name' => 'Nome', 'status' => 'Status']);
 		} catch (\Exception $e) {
 			Alert::displayAlert('system', "QUERY_ERROR", false);
 		}
@@ -42,15 +42,14 @@ class ContactsController extends \Core\Controller {
 		}
 	}
 
-	public function saveRegister() {
+	private function saveRegister() {
 		try {
 			$user2 = $this->searchUser(['email' => $_POST['contacts']['email']]);
 			$this->model->verifyExistingRequest($user2['id']);
 			$this->model->create($user2['id']);
 
-			Alert::displayAlert('contacts', "WAITING_APPROVAL", $returnSendApproval);
+			Alert::displayAlert('contacts', "WAITING_APPROVAL", true);
 		} catch (\Exception $e) {
-			echo $e->getMessage();exit();
 			Alert::displayAlert('contacts', "REGISTER", false);
 		}
 		
@@ -115,7 +114,7 @@ class ContactsController extends \Core\Controller {
 			$deleted = false;
 		}
 
-		Alert::displayAlert('contacts', 'DELETE', $returnDelete);
+		Alert::displayAlert('contacts', 'DELETE', $deleted);
 		$this->index();
 	}
 }

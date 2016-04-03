@@ -1,6 +1,7 @@
 <?php
 
 namespace Controllers;
+use \Helpers\Alert;
 
 class UserController extends \Core\Controller {
 	public function __construct(){

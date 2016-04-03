@@ -93,7 +93,7 @@ class Alert {
 				'REGISTER'         => 'Contato adicionado com sucesso!',
 				'WAITING_APPROVAL' => 'Solicitação enviada com sucesso!',
 				'DELETE'           => 'Contato excluido com sucesso!',
-				'ACCEPT_CONTACT'   => 'Contato salvo com sucesso!',
+				'ACCEPT_CONTACT'   => 'Parabéns vocês agora são amigos!',
 			],
 		],
 	];
