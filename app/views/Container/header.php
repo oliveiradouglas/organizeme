@@ -12,7 +12,7 @@
 
 		<link rel="stylesheet" href="/app/webroot/bootstrap/css/bootstrap.min.css">
 		<link rel="stylesheet" href="/app/webroot/bootstrap/css/datepicker/bootstrap-datepicker.min.css">
-		<link rel="stylesheet" href="/app/webroot/css/estilos.css">
+		<link rel="stylesheet" href="/app/webroot/css/styles.css">
 		<link rel="stylesheet" href="/app/webroot/datatable/css/jquery.dataTables.min.css">
 		<link rel="shortcut icon" href="/app/webroot/img/favicon.png">
 		<script src="/app/webroot/js/jquery.min.js"></script>

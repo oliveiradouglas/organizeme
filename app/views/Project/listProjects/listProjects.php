@@ -43,12 +43,19 @@
 									<a class='btn btn-default' href='<?= generateLink('task', 'listTasks', [$project['id']]); ?>' title='Tarefas'>
 										<span class="glyphicon glyphicon-list-alt"></span>
 									</a>
-									<a class='btn btn-default' href='<?= generateLink('project', 'edit', [$project['id']]); ?>' title='Editar projeto'>
-										<span class='glyphicon glyphicon-pencil'></span>
+									<a class='btn btn-default' href='<?= generateLink('project', 'visualize', [$project['id']]); ?>' title='Visualizar projeto'>
+										<span class='glyphicon glyphicon-eye-open'></span>
 									</a>
-									<a class='btn btn-danger' href='#' onclick='openDeleteModal(<?= $project['id'] ?>, "project", $(this));return false;' title='Excluir projeto'>
-										<span class='glyphicon glyphicon-remove'></span>
-									</a>
+									
+									<?php if ($project['user_id'] == $_SESSION['user']['id']): ?>
+										<a class='btn btn-default' href='<?= generateLink('project', 'edit', [$project['id']]); ?>' title='Editar projeto'>
+											<span class='glyphicon glyphicon-pencil'></span>
+										</a>
+
+										<a class='btn btn-danger' href='#' onclick='openDeleteModal(<?= $project['id'] ?>, "project", $(this));return false;' title='Excluir projeto'>
+											<span class='glyphicon glyphicon-remove'></span>
+										</a>
+									<?php endif; ?>
 								</td>
 							</tr>
 						<?php endforeach; ?>

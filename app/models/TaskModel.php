@@ -5,7 +5,7 @@ namespace Models;
 class TaskModel extends \Core\Model {
 	public function __construct(){
 		parent::__construct('task');
-		$this->setRequiredField('creator_id', 'performer_id', 'name', 'due_date', 'priority', 'description');
+		$this->setRequiredField('creator_id', 'performer_id', 'name', 'due_date', 'priority');
 	}
 
 	public function loadTasksToRemember() { 
@@ -49,18 +49,17 @@ class TaskModel extends \Core\Model {
 		$where = array_merge($where, $extraResearch);
 		$task = $this->find($where);
 
-		if ($this->taskEmptyOrCurrentUserIsNotRelatedTask($task)) {
-			Alert::displayAlert('task', 'TASK_NOT_FOUND', false);
+		$projectUsersModel = new ProjectUsersModel();
+		if (empty($task) || ($this->currentUserIsNotRelatedTask($task) && !$projectUsersModel->currentUserRelatedToTheProject($projectId))) {
+			\Helpers\Alert::displayAlert('task', 'TASK_NOT_ALLOWED_EDIT', false);
 			redirectToPage(generateLink('task', 'listTasks', [$projectId]));
 		}
 
 		return $task[0];
 	}
 
-	private function taskEmptyOrCurrentUserIsNotRelatedTask($task) {
-		return (empty($task) 
-					||	($task[0]['creator_id'] != $_SESSION['user']['id'] && $task[0]['performer_id'] != $_SESSION['user']['id'])
-				);
+	private function currentUserIsNotRelatedTask($task) {
+		return ($task[0]['creator_id'] != $_SESSION['user']['id']) && ($task[0]['performer_id'] != $_SESSION['user']['id']);
 	}
 
 	public function edit($taskId) {

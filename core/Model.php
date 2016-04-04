@@ -17,7 +17,12 @@ abstract class Model {
 		if (!isset($andWhere['active'])) $andWhere['active'] = 1;
 		
 		$andWhere = $this->mountStringMap($andWhere, ' AND ');
-		$orWhere  = (empty($andWhere) && !empty($orWhere) || empty($orWhere) ? '' : ' OR ') . $this->mountStringMap($orWhere, ' OR ');
+
+		if ((empty($andWhere) && !empty($orWhere)) || empty($orWhere)) {
+			$orWhere = '';
+		} else {
+			$orWhere  = ' AND (' . $this->mountStringMap($orWhere, ' OR ') . ')';
+		}
 
 		$query .= "{$andWhere} {$orWhere};";
 
@@ -42,9 +47,13 @@ abstract class Model {
 		return $stringMap;
 	}
 
-	protected function executeQuery($query){
+	protected function executeQuery($query, $returnId = false){
 		$mysqli      = Connection::openConnection();
 		$returnQuery = $mysqli->query($query);
+
+		if ($returnId) 
+			$returnQuery = ['status' => $returnQuery, 'id' => $mysqli->insert_id];
+
 		Connection::closeConnection($mysqli);
 
 		return $returnQuery;
@@ -67,9 +76,12 @@ abstract class Model {
 		$values  = implode(array_filter($data, [$this, 'escape']), ', ');
 
 		$query  = "INSERT INTO {$this->table} ({$columns}) VALUES ({$values});";
-		$insert = $this->executeQuery($query);
+		$insert = $this->executeQuery($query, true);
 
-		if (!$insert) throw new \Exception("Ocorreu algum erro ao cadastrar!");
+		if (!$insert['status']) 
+			throw new \Exception("Ocorreu algum erro ao cadastrar!");
+
+		return $insert['id'];
 	}
 
 	private function escape(&$string){

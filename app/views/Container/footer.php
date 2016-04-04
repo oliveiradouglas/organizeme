@@ -6,7 +6,7 @@
     	</div>
     	
 		<footer class="footer" id="footer">
-    		<p class="text-center"> &copy; Douglas Oliveira 2016</p>
+    		<p class="text-center"> Douglas Oliveira <?= date('Y'); ?></p>
   		</footer>
  	</body>
 </html>

@@ -21,31 +21,31 @@
                     <tbody>                        
                         <tr>
                             <td>Nome</td>
-                            <td class="conteudo">
+                            <td class="content">
                             	<?= $task['name']; ?>
                             </td>
                         </tr>
                         <tr>
                             <td>Descricao</td>
-                            <td class="conteudo">
+                            <td class="content">
                             	<?= $task['description']; ?>
                             </td>
                         </tr>
                         <tr>
                             <td>Vencimento</td>
-                            <td class="conteudo">
+                            <td class="content">
                             	<?= formatDateToBR($task['due_date']); ?>
                             </td>
                         </tr>
                         <tr>
                             <td>Prioridade</td>
-                            <td class="conteudo">
+                            <td class="content">
                             	<?= str_replace('e', 'é', ucfirst($task['priority'])); ?>
                             </td>
                         </tr>
                         <tr>
                             <td>Concluída</td>
-                            <td class="conteudo">
+                            <td class="content">
                             	<?= ($task['completed']) ? 'Sim' : 'Não'; ?>
                             </td>
                         </tr>
@@ -53,7 +53,7 @@
                         <?php if($task['completed']): ?>
                             <tr>
                                 <td>Data conclusão</td>
-                                <td class="conteudo">
+                                <td class="content">
                                 	<?= formatDateToBR($task['conclusion_date']) ?>
                                 </td>
                             </tr>
@@ -61,7 +61,7 @@
                             <tr>
                                 <td>Lembrar com</td>
 
-                                <td class="conteudo">
+                                <td class="content">
                                     <?= $task['days_to_remember'] ?>
 
                                     dias antes do vencimento
@@ -78,11 +78,13 @@
     		      			Voltar
     		      		</button>
 
-    		      		<button type="submit" class="btn btn-success" id="editar">
-    		      			<a href="<?= generateLink('task', 'edit', [$task['project_id'], $task['id']]) ?>" style="text-decoration: none; color: white;">
-    		      				Editar
-    		      			</a>
-    		      		</button>
+                        <?php if ($task['creator_id'] == $_SESSION['user']['id']): ?>
+        		      		<button type="submit" class="btn btn-success" id="editar">
+        		      			<a href="<?= generateLink('task', 'edit', [$task['project_id'], $task['id']]) ?>" style="text-decoration: none; color: white;">
+        		      				Editar
+        		      			</a>
+        		      		</button>
+                        <?php endif; ?>
     		    	</div>
     		  	</div>
             </div>

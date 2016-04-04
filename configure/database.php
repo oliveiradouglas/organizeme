@@ -3,6 +3,6 @@
 define('DB_HOST', '');
 define('DB_USER', '');
 define('DB_PASSWORD', '');
-define('DB_SCHEMA', '');
+define('DB_SCHEMA', ' ');
 
 ?>

@@ -11,23 +11,6 @@
 		    		</a>
 		  		</div>
   			</li>
-  			<!-- <li>
-		  		<div class="btn-group" role="group">
-		    		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-		      			Ações
-		      			<span class="caret"></span>
-		    		</button>
-		    		
-		    		<ul class="dropdown-menu">
-		      			<li>
-		      				<a href="#" onclick="openDeleteModal('all')">
-		      					<span class='glyphicon glyphicon-trash'></span>
-		      					Exlcuir concluídas
-		      				</a>
-		      			</li>
-		    		</ul>
-		  		</div>
-  			</li> -->
 		</ol>
 
 		<div class="table-responsive" style="margin:30px 0px;">
@@ -57,15 +40,25 @@
 								<?php endforeach; ?>
 
 								<td class="text-center">
+									<?php if ($task['completed'] === 'Não' && (($task['creator_id'] == $_SESSION['user']['id']) || ($task['performer_id'] == $_SESSION['user']['id']))): ?>
+										<a class='btn btn-default' href='<?= generateLink('task', 'completeTask', [$task['project_id'], $task['id']]); ?>' title='Concluir tarefa'>
+											<span class='glyphicon glyphicon-ok'></span>
+										</a>
+									<?php endif; ?>
+
 									<a class='btn btn-default' href='<?= generateLink('task', 'visualize', [$task['project_id'], $task['id']]); ?>' title='Visualizar tarefa'>
 										<span class='glyphicon glyphicon-eye-open'></span>
-									</a>								
-									<a class='btn btn-default' href='<?= generateLink('task', 'edit', [$task['project_id'], $task['id']]); ?>' title='Editar tarefa'>
-										<span class='glyphicon glyphicon-pencil'></span>
 									</a>
-									<a class='btn btn-danger' href='#' onclick='openDeleteModal("<?= $task['project_id'] . '/' . $task['id']; ?>", "task", $(this));return false;' title='Excluir tarefa'>
-										<span class='glyphicon glyphicon-remove'></span>
-									</a>
+
+									<?php if ($task['creator_id'] == $_SESSION['user']['id']): ?>
+										<a class='btn btn-default' href='<?= generateLink('task', 'edit', [$task['project_id'], $task['id']]); ?>' title='Editar tarefa'>
+											<span class='glyphicon glyphicon-pencil'></span>
+										</a>
+
+										<a class='btn btn-danger' href='#' onclick='openDeleteModal("<?= $task['project_id'] . '/' . $task['id']; ?>", "task", $(this));return false;' title='Excluir tarefa'>
+											<span class='glyphicon glyphicon-remove'></span>
+										</a>
+									<?php endif; ?>
 								</td>
 							</tr>
 						<?php endforeach; ?>

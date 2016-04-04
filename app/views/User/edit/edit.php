@@ -47,7 +47,7 @@
 					  		<div class="text-right">
 					  			<div class="col-sm-10">
 					      			<button type="button" class="btn btn-danger" onclick="history.go(-1);">Cancelar</button>
-					      			<button type="submit" class="btn btn-success" id="cadastrar">Cadastrar</button>
+					      			<button type="submit" class="btn btn-success">Salvar</button>
 					      		</div>
 					    	</div>
 						</form>

@@ -30,7 +30,7 @@
 						      		<?php if (!empty($performers)): ?>
 						      			<?php foreach ($performers as $performer): ?>
 						      				<option value="<?= $performer['user_id']; ?>" <?php if ($performer['user_id'] == $task['performer_id']) echo "selected"; ?>>
-						      					<?= $performer['name']; ?>
+						      					<?= $performer['user_name']; ?>
 						      				</option>
 						      			<?php endforeach; ?>
 						      		<?php endif; ?>
@@ -44,17 +44,17 @@
 					    	</label>
 					    	
 					    	<div class="col-sm-9">
-					      		<input type="text" class="form-control" id="name" placeholder="Nome da tarefa" name="task[name]" maxlenght="50" value="<?= $task['name']; ?>" required />
+					      		<input type="text" class="form-control" id="name" placeholder="Nome da tarefa" name="task[name]" maxlength="100" value="<?= $task['name']; ?>" required />
 					    	</div>
 					  	</div>
 
 					  	<div class="form-group">
 					    	<label class="control-label col-sm-3" for="description">
-					    		Descrição *
+					    		Descrição
 					    	</label>
 
 					    	<div class="col-sm-9"> 
-					    		<textarea class="form-control" id="description" name="task[description]" rows="4" placeholder="Informe a descrição" required maxlenght="255"><?= $task['description']; ?></textarea>
+					    		<textarea class="form-control" id="description" name="task[description]" rows="4" placeholder="Informe a descrição" maxlength="255"><?= $task['description']; ?></textarea>
 					    	</div>
 					  	</div>
 

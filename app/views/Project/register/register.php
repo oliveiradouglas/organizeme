@@ -21,6 +21,36 @@
 					      		<input type="text" class="form-control" id="name" placeholder="Nome do projeto" name="project[name]" maxlenght="50" required>
 					    	</div>
 					  	</div>
+						
+						<div class="form-group">
+					    	<label class="control-label col-sm-3" for="users_project">
+					    		Usuários
+					    	</label>
+					    	
+					    	<div class="col-sm-7">
+					      		<select class="form-control col-sm-7" id="users_project" name="project_users[]" multiple>
+					      			<option value="" disabled selected style="display:none;">
+						      			Selecione os usuários...
+						      		</option>
+									
+									<?php foreach ($users as $user): ?>
+						      			<option value="<?= $user['user_id']; ?>">
+						      				<?= $user['name']; ?>
+						      			</option>
+						      		<?php endforeach; ?>
+					      		</select>
+					    	</div>
+					  	</div>
+
+					  	<div class="form-group">
+					    	<label class="control-label col-sm-3" for="description">
+					    		Descrição
+					    	</label>
+
+					    	<div class="col-sm-7"> 
+					    		<textarea class="form-control" id="description" name="project[description]" rows="5" placeholder="Informe a descrição" maxlenght="255"></textarea>
+					    	</div>
+					  	</div>
 
 				  		<div class="text-right">
 				  			<div class="col-sm-10">

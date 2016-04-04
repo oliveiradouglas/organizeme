@@ -19,6 +19,7 @@ create table project (
 alter table project add constraint pk_project primary key (id);
 alter table project modify id int(11) auto_increment;
 alter table project add constraint fk_project_user foreign key (user_id) references user (id) on delete no action on update no action;
+alter table project add description varchar(255);
 
 create table task (
 	id int(11),
@@ -39,6 +40,7 @@ alter table task modify id int(11) auto_increment;
 alter table task add constraint fk_task_project foreign key (project_id) references project (id) on delete no action on update no action;
 alter table task add constraint fk_task_creator foreign key (creator_id) references user (id) on delete no action on update no action;
 alter table task add constraint fk_task_performer foreign key (performer_id) references user (id) on delete no action on update no action;
+alter table task modify name varchar(100) not null;
 
 create table file (
 	id int(11),
@@ -66,13 +68,14 @@ alter table contacts add constraint contacts_user1 foreign key (user1) reference
 alter table contacts add constraint contacts_user2 foreign key (user2) references user (id);
 alter table contacts add accepted boolean default false;
 
-create table `group` (
+create table project_users (
 	id int(11),
-	name varchar(50) not null,
-	active boolean default true
+	project_id int(11) not null,
+	user_id int(11) not null
 );
-
-alter table `group` add constraint pk_group primary key (id);
-alter table `group` modify id int(11) auto_increment;
-alter table `group` add user_id int(11) not null;
-alter table `group` add constraint group_user foreign key (user_id) references user (id);
+ 
+alter table project_users add constraint pk_project_users primary key (id);
+alter table project_users modify id int(11) auto_increment;
+alter table project_users add constraint project_users_project foreign key (project_id) references project (id);
+alter table project_users add constraint project_users_user foreign key (user_id) references user (id);
+alter table project_users add active boolean default true;

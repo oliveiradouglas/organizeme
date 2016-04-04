@@ -8,25 +8,26 @@ class ProjectModel extends \Core\Model {
 		$this->setRequiredField('name', 'user_id');
 	}
 
-	public function searchProjects() {
-		$query = "SELECT *
-					FROM project p
-					INNER JOIN user u
-					ON p.user_id = u.id
-					WHERE p.user_id = {$_SESSION['user']['id']}
-					AND p.active = 1";
+	public function searchProjects($projectId = null) {
+		$query = "SELECT DISTINCT(p.id) as id, p.name as name, p.description as description, p.user_id as user_id
+			FROM project p
+			INNER JOIN project_users pu ON pu.project_id = p.id AND pu.active = 1
+			WHERE (p.user_id = \"{$_SESSION['user']['id']}\" OR pu.user_id = \"{$_SESSION['user']['id']}\")
+			AND p.active = 1";
+
+		$query .= (!empty($projectId) ? " AND p.id = \"{$projectId}\"" : '') . ';';
+
+		$returnQuery  = $this->executeQuery($query);
+		$arrayRecords = $this->createArrayRecords($returnQuery);
+
+		return $arrayRecords;			
 	}
 
 	public function loadProject($projectId) {
-		$where = [
-			'id'      => $projectId,
-			'user_id' => $_SESSION['user']['id'],
-		];
-
-		$project = $this->find($where);
+		$project = $this->searchProjects($projectId);
 
 		if (empty($project)) {
-			Alert::displayAlert('project', 'PROJECT_NOT_FOUND', false);
+			\Helpers\Alert::displayAlert('project', 'PROJECT_NOT_FOUND', false);
 			redirectToPage(generateLink('project', 'listProjects'));
 		}
 
@@ -36,7 +37,7 @@ class ProjectModel extends \Core\Model {
 	public function create() {
 		$dataProject = $this->loadPostProject();
 		$this->validateRequiredFields($this->requiredFields, $dataProject);
-		$this->save($dataProject);
+ 		return $this->save($dataProject);
 	}
 
 	public function edit($projectId) {

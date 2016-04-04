@@ -2,6 +2,7 @@
 
 namespace Controllers;
 use Models\UserModel;
+use Helpers\Alert;
 
 class TaskController extends \Core\Controller {
 	public function __construct(){
@@ -19,6 +20,9 @@ class TaskController extends \Core\Controller {
 		$this->validateFillTheId($url, 'project');
 
 		try {
+			$projectUsersModel = new \Models\ProjectUsersModel();
+			$projectUsersModel->verifyCurrentUserRelatedToTheProject($url[2]);
+
 			$tasks = $this->model->find(['project_id' => $url[2]]);
 			array_filter($tasks, [$this->model, 'translateConclusion']);
 			
@@ -62,8 +66,11 @@ class TaskController extends \Core\Controller {
 
 	private function loadAndAssignPerformers($projectId) {
 		try {
-			$contactsModel = new \Models\ContactsModel();
-			$performers    = $contactsModel->searchMyContacts();
+			$projectUsersModel = new \Models\ProjectUsersModel();
+			$performers        = $projectUsersModel->loadProjectUsers($projectId);
+			$performers[]      = ['user_id' => $_SESSION['user']['id'], 'user_name' => $_SESSION['user']['name'] . ' (Eu)'];
+			$performers        = uniqueMultidimArray(array_reverse($performers), 'user_id');
+
 			$this->view->assignVariable('performers', $performers);
 		} catch (\Exception $e) {
 			Alert::displayAlert('contacts', 'LOAD_CONTACTS', false);
@@ -80,9 +87,15 @@ class TaskController extends \Core\Controller {
 		UserModel::verifyUserIsLogged();
 		$this->validateFillTheId($url, 'project', 'task');
 
-		$task = $this->model->loadTask($url[3], $url[2]);
-		if ($this->postExists('task')) 
+		$task = $this->model->loadTask($url[3], $url[2], ['creator_id' => $_SESSION['user']['id']]);
+		if ($this->postExists('task')) {
+			if (empty($task)) {
+				Alert::displayAlert('task', 'TASK_NOT_ALLOWED_EDIT', false);
+				$this->index($url[2]);
+			}
+
 			$this->saveEdit($url[3], $url[2]);
+		}
 
 		$this->view->assignVariable('task', $task);
 		$this->loadAndAssignPerformers($url[2]);
@@ -123,6 +136,32 @@ class TaskController extends \Core\Controller {
 		}
 
 		Alert::displayAlert('task', 'DELETE', $deleted);
-		redirectToPage(generateLink('task', 'listTasks', [$url[2]]));
+		$this->index($url[2]);
 	}
+
+	public function completeTask(array $url) {
+		UserModel::verifyUserIsLogged();
+		$this->validateFillTheId($url, 'project', 'task');
+
+		try {
+			$andWhere = ['id' => $url[3], 'project_id' => $url[2]];
+			$orWhere  = ['creator_id' => $_SESSION['user']['id'], 'performer_id' => $_SESSION['user']['id']];
+			$task     = $this->model->find($andWhere, $orWhere);
+
+			if (empty($task)) {
+				Alert::displayAlert('task', 'USER_UNRELATED_TO_TASK', false);
+				$this->index($url[2]);
+			}
+
+			$completeTask = ['completed' => 1, 'conclusion_date' => date('Y-m-d')];
+			$this->model->update($completeTask, $url[3]);
+			
+			$completed = true;
+		} catch (\Exception $e) {
+			$completed = false;
+		}
+
+		Alert::displayAlert('task', 'TASK_COMPLETE', $completed);
+		$this->index($url[2]);
+	}	
 }
