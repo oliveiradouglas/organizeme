@@ -120,6 +120,10 @@ class TaskController extends \Core\Controller {
 
 		$task = $this->model->loadTask($url[3], $url[2]);
 
+		$userModel         = new UserModel();
+		$task['creator']   = $userModel->find(['id' => $task['creator_id']])[0]['name'];
+		$task['performer'] = $userModel->find(['id' => $task['performer_id']])[0]['name'];
+
 		$this->view->assignVariable('task', $task);
 		$this->view->createPage('Task', 'visualize');
 	}

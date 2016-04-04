@@ -26,6 +26,18 @@
                             </td>
                         </tr>
                         <tr>
+                            <td>Criador</td>
+                            <td class="content">
+                                <?= $task['creator']; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Executante</td>
+                            <td class="content">
+                                <?= $task['performer']; ?>
+                            </td>
+                        </tr>
+                        <tr>
                             <td>Descricao</td>
                             <td class="content">
                             	<?= $task['description']; ?>
