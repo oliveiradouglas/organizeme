@@ -90,3 +90,9 @@ input[type=search] {
 	color: #FFF; 
 	padding-top: 15px;
 }
+
+.sub-titulo {
+	font-weight: bold; 
+	color: #777;
+	text-transform: uppercase;
+}

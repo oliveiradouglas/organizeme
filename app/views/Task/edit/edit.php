@@ -12,7 +12,7 @@
 				</div>
 
 				<div class="panel-body">
-					<form class="form-horizontal" role="form" method="post" id="form-validate" action="<?= generateLink('task', 'edit', [$task['project_id'], $task['id']]); ?>">
+					<form class="form-horizontal" role="form" method="post" id="form-validate" action="<?= generateLink('task', 'edit', [$task['project_id'], $task['id']]); ?>" enctype="multipart/form-data">
 
 						<input type="hidden" name="task[creator_id]" value="<?= $task['creator_id']; ?>" />
 
@@ -124,6 +124,11 @@
 							<label class="control-label">
 					    		dias antes do vencimento
 					    	</label>
+					  	</div>
+
+					  	<div class="form-group">
+					  		<label class="control-label col-sm-3" for="file">Arquivo</label>
+							<input id="file" type="file" class="file" name="file" />
 					  	</div>
 
 				  		<div class="text-right">

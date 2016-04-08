@@ -6,29 +6,41 @@
 		</h1>
 
 		<p class="lead">
-			Sistema destinado qualquer pessoa ou grupo que precisam organizar suas atividades.
+			Sistema destinado grupos que precisam organizar as responsabilidades integrantes.
 		</p>
 	</div>
 
 	<div class="row marketing">
 		<div class="col-lg-6">
-			<h5 style="font-weight: bold; color: #777;">SOBRE</h5>
+			<h5 class='sub-titulo'>SOBRE</h5>
 		
 	  		<p>
 	  			OrganizeME é um sistema de controle de tarefas, se você precisa de uma ajuda para colocar as coisas em ordem esta no lugar certo.
-				Mantenha tudo sob controle de forma simples e eficiente, temos uma ótima ferramenta para controlar suas tarefa e garantir que você se mantenha sempre organizado.
+				Mantenha tudo sob controle de forma simples e eficiente, nossa ferramenta foi projetada para garantir que seu grupo esteja sempre organizado.
 	  		</p>
 		</div>
 
-		<div class="col-lg-6">
-	    	<h5 style="font-weight: bold; color: #777;">PROJETO</h5>
+		<div class="col-lg-3">
+			<h5 class='sub-titulo'>CONTATO</h5>
+			
+			<ul>
+				<li>Duvidas?</li>
+				<li>Reclamações?</li>
+				<li>Sugestôes?</li>
+			</ul>
+	  		<p>
+	  			Entre em contato clicando <a href="/home/contact">aqui</a>.
+	  		</p>
+		</div>
+
+		<div class="col-lg-3">
+	    	<h5 class='sub-titulo'>PROJETO</h5>
 
 	      	<p>
-	      		O projeto encontra-se disponível no github, livre para ser alterado conforme necessidade.
-	      		Acesse atravéz deste 
+	      		Quer contribuir? entra la no GitHub e faça a diferença!
 
 	      		<a href="https://github.com/sthill02/OrganizeME/" target="__blank">
-	      			link.
+	      			Clique aqui.
 	      		</a>
 	      	</p>
 		</div>

@@ -54,7 +54,11 @@ class TaskController extends \Core\Controller {
 		
 	private function saveRecord() {
 		try {		
-			$this->model->create();
+			$taskId = $this->model->create();
+
+			$fileModel = new \Models\FileModel();
+			// $fileModel->create($taskId);
+			
 			$registred = true;
 		} catch (\Exception $e) {
 			$registred = false;

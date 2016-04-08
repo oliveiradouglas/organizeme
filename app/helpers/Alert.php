@@ -7,7 +7,11 @@ class Alert {
 		$type    = (($success) ? 'success' : 'danger');
 
 		try {
-			$message = self::$messages[$type][$controllerName][$messageIndex];
+			if(isset(self::$messages[$type][$controllerName][$messageIndex])) {
+				$message = self::$messages[$type][$controllerName][$messageIndex];
+			} else {
+				$message = $messageIndex;
+			}
 		} catch (\Exception $e){
 			$message = 'Ocorreu algum erro ao processar a operação, contate o administrador.';
 		}
@@ -73,6 +77,11 @@ class Alert {
 				'EXISTING_CONTACT' => 'O usuário informado ja é seu amigo!',
 				'LOAD_CONTACTS'    => 'Ocorreu algum erro ao carregar os contatos!',
 				'CONTACTS_ID'      => 'Contato não informado!',
+			],
+			'file' => [
+				'ERROR_UPLOAD_FILE'   => 'Ocorreu algum erro ao fazer o upload do arquivo!',
+				'EXCEEDED_MAX_SIZE'   => 'Você inseriu um arquivo muito grande, o tamanho máximo de upload é de 5MB!',
+				'ERROR_VALIDATE_FILE' => 'Ocorreu algum erro ao validar o arquivo!',
 			],
 		],
 		'success' => [
