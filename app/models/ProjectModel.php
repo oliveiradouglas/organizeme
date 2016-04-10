@@ -36,13 +36,13 @@ class ProjectModel extends \Core\Model {
 
 	public function create() {
 		$dataProject = $this->loadPostProject();
-		$this->validateRequiredFields($this->requiredFields, $dataProject);
+		$this->validateRequiredFields($dataProject);
  		return $this->save($dataProject);
 	}
 
 	public function edit($projectId) {
 		$dataProject = $this->loadPostProject();
-		$this->validateRequiredFields($this->requiredFields, $dataProject);
+		$this->validateRequiredFields($dataProject);
 		$this->update($dataProject, $projectId);
 	}
 

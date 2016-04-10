@@ -9,47 +9,52 @@ class FileModel extends \Core\Model {
 	}
 
 	public function create($taskId) {
-		$file['name']   = $this->loadPostFile();
-		$file['taskId'] = $taskId;
+		$file['name']    = $this->loadPostFile();
 
-		$this->validateRequiredFields($this->requiredFields);
- 		return $this->save();
+		if (empty($file['name']))
+			return;
+
+		$file['task_id'] = $taskId;
+		$this->validateRequiredFields($file);
+ 		return $this->save($file);
 	}
 
 	public function loadPostFile() {
 		$file = $_FILES['file'];
+		
+		if (empty($file['name'])) 
+			return;
+
 		$this->validateFile($file, false);
 		return sha1(time()) . "-{$file['name']}";
 	}
 
-	public function validateFile($file, $internalCall) {
+	public function validateFile($file) {
 		if ($file['error'] != 0) {
 			\Helpers\Alert::displayAlert('file', 'ERROR_UPLOAD_FILE', false);
-			if ($internalCall) return false;
-			redirectToPage($_SESSION['HTTP_REFERER']);
+			redirectToPage($_SERVER['HTTP_REFERER']);
 		}
 
-		$validExtensions = ['jpg', 'png', 'gif', 'pdf', 'xls', 'xlsx', 'doc', 'docx', 'odt', 'ppt', 'pptx'];
-		$extension       = strtolower(end(explode('.', $file['name'])));
+		$validExtensions = ['jpg', 'png', 'gif', 'pdf', 'xls', 'xlsx', 'doc', 'docx', 'odt', 'ppt', 'pptx', 'txt'];
+		$fileNameInArray = explode('.', $file['name']);
+		$extension       = strtolower(end($fileNameInArray));
 
 		if (!in_array($extension, $validExtensions)) {
 		  	\Helpers\Alert::displayAlert('file', 'A extensão do arquivo é invalida, utilize as seguintes extensões (' . implode(', ', $validExtensions) . ')!', false);
-		  	if ($internalCall) return false;
-		  	redirectToPage($_SESSION['HTTP_REFERER']);
+		  	redirectToPage($_SERVER['HTTP_REFERER']);
 		}
 
 		$maxUploadSize = (1024 * 1024 * 5); // 5 MB
 		if ($file['size'] > $maxUploadSize) {
 			\Helpers\Alert::displayAlert('file', 'EXCEEDED_MAX_SIZE', false);
-			if ($internalCall) return false;
-		  	redirectToPage($_SESSION['HTTP_REFERER']);
+		  	redirectToPage($_SERVER['HTTP_REFERER']);
 		}
 
 		return true;
 	}
 
 	public function edit($fileId) {
-		$this->validateRequiredFields($this->requiredFields);
+		$this->validateRequiredFields();
 		$this->update($fileId);
 	}
 }

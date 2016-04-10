@@ -165,5 +165,29 @@
 		verifyConclusion();
 	});	
 
+	$('#file').change(function(){
+		validateFile(this.files[0]);
+	});
+
+	var validExtensions = new Array('jpg', 'png', 'gif', 'pdf', 'xls', 'xlsx', 'doc', 'docx', 'odt', 'ppt', 'pptx', 'txt');
+	function validateFile(file) {
+		var extension = file.name.substr(file.name.lastIndexOf('.') +1);
+		
+		if ($.inArray(extension, validExtensions) == -1) {
+			alert('O arquivo inserido é inválido insira apenas aquivos com extensões (' + validExtensions.join(', ') + ').');
+			$('#file').val('');
+			return false;
+		}
+
+		var maxUploadSize = (1024 * 1024 * 5);
+		if (file.size > maxUploadSize) {
+			alert('O arquivo inserido é muito grande, insira arquivos de até 5 MB.');
+			$('#file').val('');
+			return false;
+		}
+
+		return true;
+	}
+
 	activeMenu('list_projects');
 </script>

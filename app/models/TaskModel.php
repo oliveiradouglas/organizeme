@@ -40,8 +40,8 @@ class TaskModel extends \Core\Model {
 	public function create() {
 		$dataTask               = filterArrayData($_POST['task']);		
 		$dataTask['creator_id'] = $_SESSION['user']['id'];
-		$this->validateRequiredFields($this->requiredFields, $dataTask);
-		$this->save($dataTask);
+		$this->validateRequiredFields($dataTask);
+		return $this->save($dataTask);
 	}
 
 	public function loadtask($taskId, $projectId, array $extraResearch = []) {
@@ -68,7 +68,7 @@ class TaskModel extends \Core\Model {
 		if (!isset($dataTask['completed']))
 			$dataTask['completed'] = '0';
 
-		$this->validateRequiredFields($this->requiredFields, $dataTask);
+		$this->validateRequiredFields($dataTask);
 		$this->update($dataTask, $taskId);
 	}
 

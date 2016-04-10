@@ -127,8 +127,8 @@ abstract class Model {
 		return $this->requiredFields;
 	}
 	
-	protected function validateRequiredFields($requiredFields, $data){
-	    foreach ($requiredFields as $requiredField) {
+	protected function validateRequiredFields($data){
+	    foreach ($this->requiredFields as $requiredField) {
 	        if (!isset($data[$requiredField]) || empty($data[$requiredField])) {
 	            throw new \Exception("Os campos obrigatórios não foram preenchidos!");
 	        }

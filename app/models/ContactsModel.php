@@ -54,7 +54,7 @@ class ContactsModel extends \Core\Model {
 		$dataContact['user1'] = $_SESSION['user']['id'];
 		$dataContact['user2'] = $user2Id;
 
-		$this->validateRequiredFields($this->requiredFields, $dataContact);
+		$this->validateRequiredFields($dataContact);
 		$this->save($dataContact);
 	}
 

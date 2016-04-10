@@ -41,13 +41,13 @@ class UserModel extends \Core\Model {
 	public function create() {
 		$dataUser = filterArrayData($_POST['user']);
 		$this->setRequiredField('password', 'email');
-		$this->validateRequiredFields($this->requiredFields, $dataUser);
+		$this->validateRequiredFields($dataUser);
 		$this->save($dataUser);
 	}
 
 	public function edit($userId) {
 		$dataUser = filterArrayData($_POST['user']);
-		$this->validateRequiredFields($this->requiredFields, $dataUser);
+		$this->validateRequiredFields($dataUser);
 
 		if (empty($dataUser['password'])) unset($dataUser['password']);
 
