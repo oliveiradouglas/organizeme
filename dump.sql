@@ -52,6 +52,7 @@ create table file (
 alter table file add constraint pk_file primary key (id);
 alter table file modify id int(11) auto_increment;
 alter table file add constraint fk_file_task foreign key (task_id) references task (id) on delete no action on update no action;
+alter table file modify name varchar(100);
 
 alter table task add priority enum('baixa', 'media', 'alta') not null after due_date;
 

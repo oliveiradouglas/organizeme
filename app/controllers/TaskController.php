@@ -57,8 +57,8 @@ class TaskController extends \Core\Controller {
 			$taskId = $this->model->create();
 
 			$fileModel = new \Models\FileModel();
-			$fileModel->create($taskId);
-			
+			$fileModel->saveAndUploadFile($taskId);
+
 			$registred = true;
 		} catch (\Exception $e) {
 			echo $e->getMessage();exit();
@@ -129,6 +129,10 @@ class TaskController extends \Core\Controller {
 		$task['creator']   = $userModel->find(['id' => $task['creator_id']])[0]['name'];
 		$task['performer'] = $userModel->find(['id' => $task['performer_id']])[0]['name'];
 
+		$fileModel = new \Models\FileModel();
+		$file = $fileModel->find(['task_id' => $url[3]]);
+		
+		$this->view->assignVariable('file', (empty($file) ? [] : $file[0]));
 		$this->view->assignVariable('task', $task);
 		$this->view->createPage('Task', 'visualize');
 	}

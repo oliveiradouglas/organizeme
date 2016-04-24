@@ -82,6 +82,7 @@ class Alert {
 				'ERROR_UPLOAD_FILE'   => 'Ocorreu algum erro ao fazer o upload do arquivo!',
 				'EXCEEDED_MAX_SIZE'   => 'Você inseriu um arquivo muito grande, o tamanho máximo de upload é de 5MB!',
 				'ERROR_VALIDATE_FILE' => 'Ocorreu algum erro ao validar o arquivo!',
+				'ERROR_DOWNLOAD'      => 'Ocorreu algum erro ao fazer o download do arquivo!',
 			],
 		],
 		'success' => [

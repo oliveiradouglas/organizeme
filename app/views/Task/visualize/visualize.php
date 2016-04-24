@@ -81,6 +81,17 @@
 
                             </tr>
                         <?php endif ?>
+
+                        <tr>
+                            <td>
+                                Arquivo
+                            </td>
+                            <td>
+                                <?php if (!empty($file)): ?>
+                                    <a href="<?= generateLink('file', 'download', [$file['id'], $file['name']]); ?>">Baixar</a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
 

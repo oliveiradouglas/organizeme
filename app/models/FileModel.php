@@ -8,15 +8,17 @@ class FileModel extends \Core\Model {
 		$this->setRequiredField('name', 'task_id');
 	}
 
-	public function create($taskId) {
-		$file['name']    = $this->loadPostFile();
+	public function saveAndUploadFile($taskId) {
+		$file['name'] = $this->loadPostFile();
 
 		if (empty($file['name']))
 			return;
 
 		$file['task_id'] = $taskId;
 		$this->validateRequiredFields($file);
- 		return $this->save($file);
+ 		$this->save($file);
+
+ 		move_uploaded_file($_FILES['file']['tmp_name'], PATH_ROOT . "/app/webroot/uploads/{$file['name']}");
 	}
 
 	public function loadPostFile() {
