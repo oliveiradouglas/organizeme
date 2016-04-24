@@ -33,10 +33,3 @@
 		</div>
 	</body>
 </html>
-
-<style type="text/css">
-	.corpo {
-		width: 50%;
-		float: left;
-	}
-</style>

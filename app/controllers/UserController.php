@@ -108,6 +108,6 @@ class UserController extends \Core\Controller {
 		}
 		
 		Alert::displayAlert('user', "PASSWORD_RECOVERY", $passwordRecovery);
-		redirectToPage(DOMAIN);
+		redirectToPage((isset($_SESSION['HTTP_REFERER']) ? $_SESSION['HTTP_REFERER'] : DOMAIN));
 	}
 }

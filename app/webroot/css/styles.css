@@ -92,3 +92,17 @@ input[type=search] {
 	color: #777;
 	text-transform: uppercase;
 }
+
+@media only screen and (max-width: 770px) { 
+	#box-login {
+		display: inline;
+	}
+
+	#btn-login {
+		margin-top: 15px; 
+	}
+
+	.input-group {
+		margin-top: 10px;
+	}
+}

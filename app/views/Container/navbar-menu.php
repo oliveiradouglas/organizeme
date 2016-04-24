@@ -27,7 +27,7 @@
 
 		<?php else: ?>
 
-			<div class="collapse navbar-collapse">
+			<div class="collapse navbar-collapse" id="box-login">
 	            <ul class="nav navbar-nav navbar-right">
 			        <li>
 			        	<a href="<?= generateLink('user', 'passwordRecovery'); ?> "><span class="glyphicon glyphicon-ban-circle"></span> Esqueceu a senha? </a>
@@ -40,7 +40,7 @@
 		      	<form class="navbar-form navbar-right" role="form" method="post" action="<?= generateLink('user', 'login'); ?>">
 	                <div class="input-group">
 	                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-	                    <input id="email" type="email" class="form-control" name="user[email]" placeholder="Email" required>                                        
+	                    <input id="email" type="email" class="form-control" name="user[email]" placeholder="Email" required>
 	                </div>
 
 	                <div class="input-group">
@@ -48,7 +48,7 @@
 	                    <input id="password" type="password" class="form-control" name="user[password__password]" placeholder="Senha" required>
 	                </div>
 
-	                <button type="submit" class="btn btn-success">Entrar</button>
+	                <button type="submit" class="btn btn-success" id="btn-login">Entrar</button>
 	            </form>
 			</div>
 		<?php endif; ?>

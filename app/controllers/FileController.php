@@ -20,7 +20,7 @@ class FileController extends \Core\Controller {
 		if (empty($file)) 
 			$this->processDownloadError();
 
-		$fileOnServer = PATH_ROOT . "app/webroot/uploads/{$file[0]['name']}";
+		$fileOnServer = PATH_UPLOAD . $file[0]['name'];
 		if (!file_exists($fileOnServer)) 
 			$this->processDownloadError();
 

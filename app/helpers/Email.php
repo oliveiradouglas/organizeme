@@ -41,9 +41,9 @@ class Email extends \PHPMailer {
 	}
 
 	public function fillRecipients($for) {
-		if (is_array($for['email'])) {
-			foreach ($for['email'] as $to) {
-				$this->addAddress($to);
+		if (isset($for[0])) {
+			foreach ($for as $to) {
+				$this->addAddress($to['email'], $to['name']);
 			}
 		} else {
 			$this->addAddress($for['email'], $for['name']);

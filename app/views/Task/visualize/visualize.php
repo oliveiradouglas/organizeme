@@ -88,7 +88,9 @@
                             </td>
                             <td>
                                 <?php if (!empty($file)): ?>
-                                    <a href="<?= generateLink('file', 'download', [$file['id'], $file['name']]); ?>">Baixar</a>
+                                    <a href="<?= generateLink('file', 'download', [$file['id'], $file['name']]); ?>">
+                                        <?= explode('-', $file['name'])[1]; ?>
+                                    </a>
                                 <?php endif; ?>
                             </td>
                         </tr>

@@ -61,7 +61,6 @@ class TaskController extends \Core\Controller {
 
 			$registred = true;
 		} catch (\Exception $e) {
-			echo $e->getMessage();exit();
 			$registred = false;
 		}
 
@@ -102,6 +101,10 @@ class TaskController extends \Core\Controller {
 			$this->saveEdit($url[3], $url[2]);
 		}
 
+		$fileModel = new \Models\FileModel();
+		$file      = $fileModel->find(['task_id' => $url[3]]);
+
+		$this->view->assignVariable('file', (empty($file) ? $file : $file[0]));
 		$this->view->assignVariable('task', $task);
 		$this->loadAndAssignPerformers($url[2]);
 		$this->view->createPage('Task', 'edit');
@@ -110,6 +113,21 @@ class TaskController extends \Core\Controller {
 	private function saveEdit($taskId, $projectId) {
 		try {
 			$this->model->edit($taskId);
+
+			if (!$_POST['maintainCurrentFile']) {
+				$fileModel = new \Models\FileModel();
+				$file      = $fileModel->find(['task_id' => $taskId]);
+
+				if (!empty($file)) {
+					if (file_exists(PATH_UPLOAD . $file[0]['name'])) 
+						unlink(PATH_UPLOAD . $file[0]['name']);
+					
+					$fileModel->update(['active' => '0'], $file[0]['id']);
+				}
+
+				$fileModel->saveAndUploadFile($taskId);
+			}
+
 			$registred = true;
 		} catch (\Exception $e) {
 			$registred = false;
@@ -132,7 +150,7 @@ class TaskController extends \Core\Controller {
 		$fileModel = new \Models\FileModel();
 		$file = $fileModel->find(['task_id' => $url[3]]);
 		
-		$this->view->assignVariable('file', (empty($file) ? [] : $file[0]));
+		$this->view->assignVariable('file', (empty($file) ? $file : $file[0]));
 		$this->view->assignVariable('task', $task);
 		$this->view->createPage('Task', 'visualize');
 	}
@@ -143,6 +161,13 @@ class TaskController extends \Core\Controller {
 
 		try {
 			$this->model->delete($url[3], $url[2]);
+
+			$fileModel = new \Models\FileModel();
+			$file      = $fileModel->find(['task_id' => $url[3]]);
+
+			if (!empty($file) && file_exists(PATH_UPLOAD . $file[0]['name'])) 
+				unlink(PATH_UPLOAD . $file[0]['name']);
+
 			$deleted = true;
 		} catch (\Exception $e) {
 			$deleted = false;

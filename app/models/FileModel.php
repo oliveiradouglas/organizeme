@@ -18,7 +18,7 @@ class FileModel extends \Core\Model {
 		$this->validateRequiredFields($file);
  		$this->save($file);
 
- 		move_uploaded_file($_FILES['file']['tmp_name'], PATH_ROOT . "/app/webroot/uploads/{$file['name']}");
+ 		move_uploaded_file($_FILES['file']['tmp_name'], PATH_UPLOAD . str_replace("\"", '', $file['name']));
 	}
 
 	public function loadPostFile() {

@@ -9,7 +9,7 @@
 	<body>
 		<div class="corpo">
 			<h2>
-				Ola, <?= $task['user_name'] ?>
+				Ola!
 			</h2>
 			
 			<p>
@@ -29,10 +29,3 @@
 		</div>
 	</body>
 </html>
-
-<style type="text/css">
-	.corpo {
-		width: 50%;
-		float: left;
-	}
-</style>

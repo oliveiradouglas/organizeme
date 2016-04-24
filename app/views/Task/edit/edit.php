@@ -128,7 +128,25 @@
 
 					  	<div class="form-group">
 					  		<label class="control-label col-sm-3" for="file">Arquivo</label>
-							<input id="file" type="file" class="file" name="file" />
+
+					  		<div class="col-sm-9">
+								<input id="file" type="file" class="file" name="file" />
+
+								<?php if (!empty($file)): ?>
+									<br />
+									<div id="currentFile">
+								  		<a href="<?= generateLink('file', 'download', [$file['id'], $file['name']]); ?>">
+								  			<?= explode('-', $file['name'])[1]; ?>
+								  		</a>
+							  			
+							  			<span id="removeCurrentFile" class="glyphicon glyphicon-trash" style="margin-left: 20px; cursor: pointer;"></span>
+									</div>
+
+									<input type="hidden" id="maintainCurrentFile" name="maintainCurrentFile" value="1" />
+								<?php else: ?> 
+									<input type="hidden" id="maintainCurrentFile" name="maintainCurrentFile" value="0" />
+							  	<?php endif; ?>
+					  		</div>
 					  	</div>
 
 				  		<div class="text-right">
@@ -165,6 +183,12 @@
 		verifyConclusion();
 	});	
 
+	$('#file').change(function(){
+		if (validateFile(this.files[0])) {
+			removeCurrentFile();
+		}
+	});
+
 	var validExtensions = new Array('jpg', 'png', 'gif', 'pdf', 'xls', 'xlsx', 'doc', 'docx', 'odt', 'ppt', 'pptx', 'txt');
 	function validateFile(file) {
 		var extension = file.name.substr(file.name.lastIndexOf('.') +1);
@@ -186,4 +210,13 @@
 	}
 
 	activeMenu('list_projects');
+
+	$('#removeCurrentFile').click(function(){
+		removeCurrentFile();
+	});
+
+	function removeCurrentFile() {
+		$('#currentFile').remove();
+		$('#maintainCurrentFile').val(0);
+	}
 </script>

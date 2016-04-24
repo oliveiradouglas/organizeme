@@ -8,17 +8,19 @@ class CronController extends \Core\Controller {
 		$this->loadModel('task');
 		$tasks = $this->model->loadTasksToRemember();
 
-		if (!empty($tasks)) {
-			$mail = new \Helpers\Email();
+		$mail = new \Helpers\Email();
+		foreach ($tasks as $task) {
+			if ($this->verifyDateToSendEmail($task['days_to_remember'], $task['due_date'])) {
+				$mail->assignVariable('task', $task);
+				$mail->setTemplate('remember_task');
 
-			foreach ($tasks as $task) {
-				if ($this->verifyDateToSendEmail($task['days_to_remember'], $task['due_date'])) {
-					$mail->assignVariable('task', $task);
-					$mail->setTemplate('remember_task');
-					$creator = $this->fillUserData($task);
-					$mail->sendMail($creator, 'Vencimento de tarefa');
-					$mail->clearAddresses();
-				}
+				$for = [
+					$this->fillUserData($task, 'creator'),
+					$this->fillUserData($task, 'performer')
+				];
+
+				$mail->sendMail($for, 'Vencimento de tarefa');
+				$mail->clearAddresses();
 			}
 		}
 
@@ -32,10 +34,10 @@ class CronController extends \Core\Controller {
 		return (($dateToSendEmail == $today) ? true : false);
 	}
 
-	private function fillUserData($data) {
+	private function fillUserData($data, $type) {
 		$user = [
-			'name'  => $data['user_name'],
-			'email' => $data['user_email']
+			'name'  => $data["{$type}_name"],
+			'email' => $data["{$type}_email"]
 		];
 
 		return $user;

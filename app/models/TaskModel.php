@@ -10,14 +10,16 @@ class TaskModel extends \Core\Model {
 
 	public function loadTasksToRemember() { 
 		$today = date('Y-m-d');
-		$query = "SELECT t.id, t.name, t.description, t.priority, t.due_date, t.days_to_remember, u.name as user_name, u.email as user_email
-					FROM {$this->table} t
-					INNER JOIN user u
-					ON t.creator_id = u.id
-					WHERE t.days_to_remember > 0
-					AND t.due_date > {$today}
-					AND t.completed = 0
-					AND t.active = 1";
+		$query = "SELECT task.id, task.name, task.description, task.priority, task.due_date, task.days_to_remember, creator.name as creator_name, creator.email as creator_email, performer.name as performer_name, performer.email as performer_email
+					FROM {$this->table} task
+					INNER JOIN user creator
+					ON task.creator_id = creator.id
+					INNER JOIN user performer
+					ON task.performer_id = performer.id
+					WHERE task.days_to_remember > 0
+					AND task.due_date > {$today}
+					AND task.completed = 0
+					AND task.active = 1";
 
 		$returnQuery  = $this->executeQuery($query);
 		$arrayRecords = $this->createArrayRecords($returnQuery);
