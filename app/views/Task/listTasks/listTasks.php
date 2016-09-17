@@ -35,12 +35,18 @@
 							<tr>
 								<?php foreach ($tableHeader as $key => $header): ?>
 									<td>
-										<?= ((strpos($key, 'date') !== false) ? formatDateToBR($task[$key]) : $task[$key]); ?>
+										<?php if (strpos($key, 'date') !== false): ?>
+											<?= formatDateToBR($task[$key]); ?>
+										<?php elseif ($key == 'completed'): ?>
+											<?= ($task['completed'] ? 'Sim' : 'Não'); ?>
+										<?php else: ?>
+											<?= $task[$key]; ?>
+										<?php endif; ?>
 									</td>
 								<?php endforeach; ?>
 
 								<td class="text-center">
-									<?php if ($task['completed'] === 'Não' && (($task['creator_id'] == $_SESSION['user']['id']) || ($task['performer_id'] == $_SESSION['user']['id']))): ?>
+									<?php if (!$task['completed'] && (($task['creator_id'] == $_SESSION['user']['id']) || ($task['performer_id'] == $_SESSION['user']['id']))): ?>
 										<a class='btn btn-default' href='<?= generateLink('task', 'completeTask', [$task['project_id'], $task['id']]); ?>' title='Concluir tarefa'>
 											<span class='glyphicon glyphicon-ok'></span>
 										</a>

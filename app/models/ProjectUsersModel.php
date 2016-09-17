@@ -9,6 +9,10 @@ class ProjectUsersModel extends \Core\Model {
 	}
 
 	public function saveProjectUsers($projectId) {
+		if (!isset($_POST['project_users'])) {
+			return;
+		}
+
 		foreach ($_POST['project_users'] as $userId) {
 			if (empty($userId)) continue;
 			

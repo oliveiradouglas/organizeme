@@ -57,9 +57,8 @@ class UserModel extends \Core\Model {
 
 	public function passwordRecovery() {
 		$user = $this->find(['email' => $_POST['recovery_email']]);
-
 		if (empty($user)) {
-			throw new \Exception("Usuário não encontrado para recuperar a senha!");
+			throw new \DomainException("Usuário não encontrado!");
 		}
 
 		$newPassword = md5(mt_rand());

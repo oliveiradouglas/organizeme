@@ -48,7 +48,6 @@ class ProjectController extends \Core\Controller {
 
 			$registred = true;
 		} catch (\Exception $e) {
-			echo $e->getMessage();exit();
 			$registred = false;
 		}
 

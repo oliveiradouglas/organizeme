@@ -27,10 +27,6 @@ class TaskModel extends \Core\Model {
 		return $arrayRecords;
 	}
 
-	public function translateConclusion(&$task) {
-	    $task['completed'] = ($task['completed'] ? 'Sim' : 'Não');
-	}
-
 	public function getHeaderOfListing() {
 		return [
 			'name'      => 'Nome',

@@ -101,13 +101,14 @@ class UserController extends \Core\Controller {
 			return true;
 		}
 		
+		$passwordRecovery = false;
 		try {
 			$passwordRecovery = $this->model->passwordRecovery();
-		} catch (\Exception $e) {
-			$passwordRecovery = false;
+			Alert::displayAlert('user', "PASSWORD_RECOVERY", $passwordRecovery);
+		} catch (\DomainException $ex) {
+			Alert::displayAlert('user', $ex->getMessage(), $passwordRecovery);
 		}
 		
-		Alert::displayAlert('user', "PASSWORD_RECOVERY", $passwordRecovery);
 		redirectToPage((isset($_SESSION['HTTP_REFERER']) ? $_SESSION['HTTP_REFERER'] : DOMAIN));
 	}
 }

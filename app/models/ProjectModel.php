@@ -11,7 +11,7 @@ class ProjectModel extends \Core\Model {
 	public function searchProjects($projectId = null) {
 		$query = "SELECT DISTINCT(p.id) as id, p.name as name, p.description as description, p.user_id as user_id
 			FROM project p
-			INNER JOIN project_users pu ON pu.project_id = p.id AND pu.active = 1
+			LEFT JOIN project_users pu ON pu.project_id = p.id AND pu.active = 1
 			WHERE (p.user_id = \"{$_SESSION['user']['id']}\" OR pu.user_id = \"{$_SESSION['user']['id']}\")
 			AND p.active = 1";
 

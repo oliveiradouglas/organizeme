@@ -73,8 +73,8 @@ abstract class Model {
 
 	public function save(array $data){
 		$columns = implode(array_keys($data), ', ');
-		$values  = implode(array_filter($data, [$this, 'escape']), ', ');
-
+		$values  = implode(array_map([$this, 'escape'], $data), ', ');
+		
 		$query  = "INSERT INTO {$this->table} ({$columns}) VALUES ({$values});";
 		$insert = $this->executeQuery($query, true);
 
@@ -85,8 +85,8 @@ abstract class Model {
 	}
 
 	private function escape(&$string){
-		$string = "\"{$string}\"";
-		return $string;
+		$strings = "\"{$string}\"";
+		return $strings;
 	}
 
 	public function update(array $data, $where){

@@ -24,8 +24,6 @@ class TaskController extends \Core\Controller {
 			$projectUsersModel->verifyCurrentUserRelatedToTheProject($url[2]);
 
 			$tasks = $this->model->find(['project_id' => $url[2]]);
-			array_filter($tasks, [$this->model, 'translateConclusion']);
-			
 			$this->view->assignVariable('tableHeader', $this->model->getHeaderOfListing());
 			$this->view->assignVariable('projectId', $url[2]);
 			$this->view->assignVariable('tasks', $tasks);

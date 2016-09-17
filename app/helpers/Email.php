@@ -9,6 +9,13 @@ class Email extends \PHPMailer {
 	public function __construct() {
 		$this->setLanguage('pt', PATH_ROOT . 'vendor/phpmailer/phpmailer/language/');
 		$this->isSMTP();
+
+		$this->CharSet    = 'UTF-8';
+		$this->FromName   = 'OrganizeME';
+		$this->Host       = 'smtp.gmail.com';
+		$this->Port       = 587;
+		$this->SMTPSecure = 'tls';
+		$this->SMTPAuth   = true;
 	}
 
 	public function setTemplate($templateName){
